@@ -41,7 +41,7 @@ public class Installment {
     @Column(name = "installment_value", nullable = false)
     private BigDecimal installmentValue;
 
-    @Column(name = "quantity-installments")
+    @Column(name = "quantity_installments")
     private Integer quantityInstallments;
 
     @Column(name = "is_paid", nullable = false)
