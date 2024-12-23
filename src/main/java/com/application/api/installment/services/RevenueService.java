@@ -57,6 +57,14 @@ public class RevenueService {
         return revenueRepository.findAll(pageRequest);
     }
 
+    public void delete(UUID id) {
+        Revenue revenue = getById(id);
+        if(revenue.getIsInstallment()) {
+            installmentRepository.deleteInstallmentByRevenue(revenue);
+        }
+        revenueRepository.delete(revenue);
+    }
+
     private Installment createInstallment(Revenue revenueSaved, int i, BigDecimal result) {
         Installment installment = new Installment();
         installment.setCurrentMonth(revenueSaved.getInitialDate().plusMonths(i));

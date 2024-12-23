@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -55,5 +56,11 @@ public class RevenueController {
         Page<Revenue> pageRevenue = revenueService.getAll(page, pageSize);
         var pageList = pageRevenue.map(revenueMapper::entityToDto);
         return ResponseEntity.ok(pageList);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable("id") String id) {
+        revenueService.delete(UUID.fromString(id));
+        return ResponseEntity.noContent().build();
     }
 }
