@@ -5,10 +5,11 @@ import com.application.api.installment.repositories.InstallmentRepository;
 import com.application.api.installment.repositories.specification.InstallmentSpecification;
 import com.application.api.installment.services.InstallmentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -17,10 +18,11 @@ public class InstallmentServiceImpl implements InstallmentService {
     private final InstallmentRepository installmentRepository;
 
     @Override
-    public List<Installment> getInstallments(String month, String year) {
+    public Page<Installment> getInstallments(String month, String year, Integer page, Integer pageSize) {
         Specification<Installment> specification = Specification
                 .where(InstallmentSpecification.getByMonth(month))
                 .and(InstallmentSpecification.getByYear(year));
-        return installmentRepository.findAll(specification);
+        Pageable pageable = PageRequest.of(page, pageSize);
+        return installmentRepository.findAll(specification, pageable);
     }
 }
