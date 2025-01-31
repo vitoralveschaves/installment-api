@@ -17,11 +17,10 @@ public class InstallmentServiceImpl implements InstallmentService {
     private final InstallmentRepository installmentRepository;
 
     @Override
-    public List<Installment> getInstallments(String month) {
+    public List<Installment> getInstallments(String month, String year) {
         Specification<Installment> specification = Specification
-                .where(InstallmentSpecification.getByMonth(month));
-        var installments = installmentRepository.findAll(specification);
-        System.out.println(installments.toString());
-        return installments;
+                .where(InstallmentSpecification.getByMonth(month))
+                .and(InstallmentSpecification.getByYear(year));
+        return installmentRepository.findAll(specification);
     }
 }

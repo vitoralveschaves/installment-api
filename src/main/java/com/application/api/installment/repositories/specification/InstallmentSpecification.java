@@ -15,4 +15,15 @@ public class InstallmentSpecification {
                 ), month
         );
     }
+
+    public static Specification<Installment> getByYear(String year) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(
+                criteriaBuilder.function(
+                        "to_char",
+                        String.class,
+                        root.get("currentMonth"),
+                        criteriaBuilder.literal("YYYY")
+                ), year
+        );
+    }
 }

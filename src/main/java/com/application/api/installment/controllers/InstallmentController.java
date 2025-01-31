@@ -21,8 +21,9 @@ public class InstallmentController {
 
     @GetMapping
     public ResponseEntity<List<InstallmentResponseDTO>> getInstallments(
-            @RequestParam(value = "month", defaultValue = "01") String month) {
-        List<Installment> installments = installmentService.getInstallments(month);
+            @RequestParam(value = "month", defaultValue = "01") String month,
+            @RequestParam(value = "year", defaultValue = "2025") String year) {
+        List<Installment> installments = installmentService.getInstallments(month, year);
         List<InstallmentResponseDTO> installmentsDto = installments
                 .stream().map(InstallmentResponseDTO::new).toList();
         return ResponseEntity.ok(installmentsDto);
