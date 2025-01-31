@@ -1,5 +1,4 @@
 package com.application.api.installment.controllers.dto;
 
-public record FieldErrors(String field, String error) {
-
+public record FieldErrorsDTO(String field, String error) {
 }

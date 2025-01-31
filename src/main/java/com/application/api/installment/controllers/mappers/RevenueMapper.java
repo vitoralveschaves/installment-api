@@ -7,7 +7,6 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface RevenueMapper {
-
     Revenue dtoToEntity(RevenueRequestDTO dto);
     RevenueResponseDTO entityToDto(Revenue entity);
 }

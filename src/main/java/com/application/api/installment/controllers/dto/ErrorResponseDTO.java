@@ -5,5 +5,5 @@ import java.util.List;
 public record ErrorResponseDTO(
         Integer status,
         String message,
-        List<FieldErrors> errors) {
+        List<FieldErrorsDTO> errors) {
 }

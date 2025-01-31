@@ -6,9 +6,6 @@ import com.application.api.installment.exceptions.RevenueNotFoundException;
 import com.application.api.installment.repositories.InstallmentRepository;
 import com.application.api.installment.repositories.RevenueRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,8 +22,7 @@ public class RevenueService {
 
     @Transactional
     public Revenue createRevenue(Revenue revenue) {
-
-        if(revenue.getQuantityInstallments() == 1) {
+        if (revenue.getQuantityInstallments() == 1) {
             revenue.setQuantityInstallments(0);
         }
         Revenue revenueSaved = revenueRepository.save(revenue);
@@ -52,17 +48,16 @@ public class RevenueService {
                 .orElseThrow(() -> new RevenueNotFoundException("Despesa não encontrada"));
     }
 
-    public Page<Revenue> getAll(Integer page, Integer pageSize) {
-        Pageable pageRequest = PageRequest.of(page, pageSize);
-        return revenueRepository.findAll(pageRequest);
-    }
-
     public void delete(UUID id) {
         Revenue revenue = getById(id);
-        if(revenue.getIsInstallment()) {
+        if (revenue.getIsInstallment()) {
             installmentRepository.deleteInstallmentByRevenue(revenue);
         }
         revenueRepository.delete(revenue);
+    }
+
+    public void update(Revenue revenue) {
+        revenueRepository.save(revenue);
     }
 
     private Installment createInstallment(Revenue revenueSaved, int i, BigDecimal result) {

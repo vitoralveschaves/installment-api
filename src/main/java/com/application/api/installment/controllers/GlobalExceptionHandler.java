@@ -1,7 +1,7 @@
 package com.application.api.installment.controllers;
 
 import com.application.api.installment.controllers.dto.ErrorResponseDTO;
-import com.application.api.installment.controllers.dto.FieldErrors;
+import com.application.api.installment.controllers.dto.FieldErrorsDTO;
 import com.application.api.installment.exceptions.RevenueNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -17,9 +17,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     public ErrorResponseDTO handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        List<FieldErrors> errorsList = e.getFieldErrors()
+        List<FieldErrorsDTO> errorsList = e.getFieldErrors()
                 .stream()
-                .map(error -> new FieldErrors(
+                .map(error -> new FieldErrorsDTO(
                         error.getField(), error.getDefaultMessage())
                 )
                 .toList();
