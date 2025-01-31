@@ -20,6 +20,8 @@ public class InstallmentServiceImpl implements InstallmentService {
     public List<Installment> getInstallments(String month) {
         Specification<Installment> specification = Specification
                 .where(InstallmentSpecification.getByMonth(month));
-        return installmentRepository.findAll(specification);
+        var installments = installmentRepository.findAll(specification);
+        System.out.println(installments.toString());
+        return installments;
     }
 }

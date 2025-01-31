@@ -22,12 +22,8 @@ public class RevenueService {
 
     @Transactional
     public Revenue createRevenue(Revenue revenue) {
-        if (revenue.getQuantityInstallments() == 1) {
-            revenue.setQuantityInstallments(0);
-        }
         Revenue revenueSaved = revenueRepository.save(revenue);
 
-        if (revenue.getIsInstallment() && revenue.getQuantityInstallments() > 1) {
             var result = revenueSaved
                     .getTotalValue()
                     .divide(
@@ -39,7 +35,7 @@ public class RevenueService {
                 Installment installment = createInstallment(revenueSaved, i, result);
                 installmentRepository.save(installment);
             }
-        }
+
         return revenueSaved;
     }
 
@@ -50,9 +46,8 @@ public class RevenueService {
 
     public void delete(UUID id) {
         Revenue revenue = getById(id);
-        if (revenue.getIsInstallment()) {
-            installmentRepository.deleteInstallmentByRevenue(revenue);
-        }
+        installmentRepository.deleteInstallmentByRevenue(revenue);
+
         revenueRepository.delete(revenue);
     }
 

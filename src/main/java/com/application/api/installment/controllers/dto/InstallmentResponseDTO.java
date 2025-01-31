@@ -29,7 +29,6 @@ public record InstallmentResponseDTO(
                         installment.getRevenue().getId(),
                         installment.getRevenue().getTitle(),
                         installment.getRevenue().getTotalValue(),
-                        installment.getRevenue().getIsInstallment(),
                         installment.getRevenue().getQuantityInstallments(),
                         installment.getRevenue().getInitialDate()
                 )

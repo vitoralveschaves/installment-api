@@ -44,9 +44,6 @@ public class Revenue {
     @Column(name = "total_value", nullable = false)
     private BigDecimal totalValue;
 
-    @Column(name = "is_installment", nullable = false)
-    private Boolean isInstallment;
-
     @Column(name = "quantity_installments")
     private Integer quantityInstallments;
 

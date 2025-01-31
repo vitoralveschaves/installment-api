@@ -9,7 +9,6 @@ public record RevenueResponseDTO(
         UUID id,
         String title,
         BigDecimal totalValue,
-        Boolean isInstallment,
         Integer quantityInstallments,
         LocalDate initialDate) {
 }

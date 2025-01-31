@@ -16,8 +16,6 @@ public record RevenueRequestDTO(
         @NotNull(message = "Campo obrigatório")
         @Positive(message = "Campo deve possuir um valor positivo")
         BigDecimal totalValue,
-        @NotNull(message = "Campo obrigatório")
-        Boolean isInstallment,
         @Positive(message = "Campo deve possuir um valor positivo")
         Integer quantityInstallments,
         @NotNull(message = "Campo obrigatório")
