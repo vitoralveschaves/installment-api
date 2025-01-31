@@ -6,9 +6,11 @@ import com.application.api.installment.repositories.specification.InstallmentSpe
 import com.application.api.installment.services.InstallmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 @RequiredArgsConstructor
 public class InstallmentServiceImpl implements InstallmentService {
 
