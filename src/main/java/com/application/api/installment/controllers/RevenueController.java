@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -39,6 +40,13 @@ public class RevenueController {
                 .buildAndExpand(revenueResponse.getId())
                 .toUri();
         return ResponseEntity.created(location).build();
+    }
+
+    @GetMapping
+    public ResponseEntity<List<RevenueResponseDTO>> getRevenues() {
+        List<Revenue> revenues = revenueService.getRevenues();
+        List<RevenueResponseDTO> revenueDtoList = revenues.stream().map(revenueMapper::entityToDto).toList();
+        return ResponseEntity.ok(revenueDtoList);
     }
 
     @GetMapping("/{id}")

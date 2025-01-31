@@ -1,5 +1,6 @@
 package com.application.api.installment.services.impl;
 
+import com.application.api.installment.controllers.dto.RevenueResponseDTO;
 import com.application.api.installment.entities.Installment;
 import com.application.api.installment.entities.Revenue;
 import com.application.api.installment.exceptions.RevenueNotFoundException;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -37,6 +39,11 @@ public class RevenueServiceImpl implements RevenueService {
             installmentRepository.save(installment);
         }
         return revenueSaved;
+    }
+
+    @Override
+    public List<Revenue> getRevenues() {
+        return revenueRepository.findAll();
     }
 
     @Override
