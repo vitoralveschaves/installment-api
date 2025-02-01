@@ -20,7 +20,7 @@ public record ExpenseRequestDTO(
         BigDecimal totalValue,
         @Positive(message = "Campo deve possuir um valor positivo")
         Integer quantityInstallments,
-        UUID category_id,
+        UUID categoryId,
         @NotNull(message = "Campo obrigatório")
         @PastOrPresent(message = "O campo não pode ser uma data futura")
         LocalDate initialDate) {
@@ -33,5 +33,4 @@ public record ExpenseRequestDTO(
                 expense.setInitialDate(this.initialDate);
                 return expense;
         }
-
 }

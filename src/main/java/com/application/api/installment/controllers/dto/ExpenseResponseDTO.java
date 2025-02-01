@@ -1,6 +1,7 @@
 package com.application.api.installment.controllers.dto;
 
 
+import com.application.api.installment.entities.Category;
 import com.application.api.installment.entities.Expense;
 
 import java.math.BigDecimal;
@@ -12,8 +13,10 @@ public record ExpenseResponseDTO(
         String title,
         BigDecimal totalValue,
         Integer quantityInstallments,
-        LocalDate initialDate) {
+        LocalDate initialDate,
+        String category) {
     public ExpenseResponseDTO(Expense expense) {
-        this(expense.getId(), expense.getTitle(), expense.getTotalValue(), expense.getQuantityInstallments(), expense.getInitialDate());
+        this(expense.getId(), expense.getTitle(), expense.getTotalValue(),
+                expense.getQuantityInstallments(), expense.getInitialDate(), expense.getCategory() != null ? expense.getCategory().getName() : null);
     }
 }

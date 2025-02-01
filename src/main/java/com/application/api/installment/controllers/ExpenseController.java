@@ -3,7 +3,9 @@ package com.application.api.installment.controllers;
 import com.application.api.installment.controllers.dto.ExpenseRequestDTO;
 import com.application.api.installment.controllers.dto.ExpenseResponseDTO;
 import com.application.api.installment.controllers.dto.ExpenseUpdateDTO;
+import com.application.api.installment.entities.Category;
 import com.application.api.installment.entities.Expense;
+import com.application.api.installment.services.CategoryService;
 import com.application.api.installment.services.ExpenseService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -20,15 +23,18 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ExpenseController {
     private final ExpenseService expenseService;
+    private final CategoryService categoryService;
 
     @PostMapping
     public ResponseEntity<Void> createExpense(@RequestBody @Valid ExpenseRequestDTO request) {
+        Optional<Category> category = categoryService.getById(request.categoryId());
         Expense expense = request.toEntity();
-        Expense revenueResponse = expenseService.createExpense(expense);
+        category.ifPresent(expense::setCategory);
+        Expense expenseResponse = expenseService.createExpense(expense);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(revenueResponse.getId())
+                .buildAndExpand(expenseResponse.getId())
                 .toUri();
         return ResponseEntity.created(location).build();
     }

@@ -2,6 +2,7 @@ package com.application.api.installment.controllers;
 
 import com.application.api.installment.controllers.dto.ErrorResponseDTO;
 import com.application.api.installment.controllers.dto.FieldErrorsDTO;
+import com.application.api.installment.exceptions.CategoryNotFoundException;
 import com.application.api.installment.exceptions.ExpenseNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -31,6 +32,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ExpenseNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponseDTO handleRevenueNotFoundException(ExpenseNotFoundException e) {
+        return new ErrorResponseDTO(HttpStatus.NOT_FOUND.value(), e.getMessage(), List.of());
+    }
+
+    @ExceptionHandler(CategoryNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponseDTO handleRevenueNotFoundException(CategoryNotFoundException e) {
         return new ErrorResponseDTO(HttpStatus.NOT_FOUND.value(), e.getMessage(), List.of());
     }
 }
