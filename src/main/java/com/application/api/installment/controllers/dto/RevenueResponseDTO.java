@@ -10,5 +10,6 @@ public record RevenueResponseDTO(
         String title,
         BigDecimal totalValue,
         Integer quantityInstallments,
+        String category,
         LocalDate initialDate) {
 }

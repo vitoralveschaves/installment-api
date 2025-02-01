@@ -50,6 +50,9 @@ public class Revenue {
     @Column(name = "initial_date", nullable = false)
     private LocalDate initialDate;
 
+    @Column(name = "category")
+    private String category;
+
     @OneToMany(mappedBy = "revenue", fetch = FetchType.LAZY)
     private List<Installment> installments;
 

@@ -1,0 +1,1 @@
+alter table revenue add column category varchar(200);

@@ -1,7 +1,6 @@
 package com.application.api.installment.repositories.specification;
 
 import com.application.api.installment.entities.Installment;
-import com.application.api.installment.entities.Revenue;
 import org.springframework.data.jpa.domain.Specification;
 
 public class InstallmentSpecification {

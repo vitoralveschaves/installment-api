@@ -18,6 +18,7 @@ public record RevenueRequestDTO(
         BigDecimal totalValue,
         @Positive(message = "Campo deve possuir um valor positivo")
         Integer quantityInstallments,
+        String category,
         @NotNull(message = "Campo obrigatório")
         @PastOrPresent(message = "O campo não pode ser uma data futura")
         LocalDate initialDate) {
