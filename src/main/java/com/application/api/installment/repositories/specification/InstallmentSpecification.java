@@ -31,4 +31,9 @@ public class InstallmentSpecification {
         return (root, query, criteriaBuilder) -> criteriaBuilder
                 .like(criteriaBuilder.upper(root.get("expense").get("title")), "%" + search.toUpperCase() + "%");
     }
+
+    public static Specification<Installment> categoryEquals(String category) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder
+                .equal(criteriaBuilder.upper(root.get("expense").get("category").get("name")), category.toUpperCase());
+    }
 }

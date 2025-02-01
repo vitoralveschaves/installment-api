@@ -3,7 +3,6 @@ package com.application.api.installment.controllers;
 import com.application.api.installment.controllers.dto.ExpenseRequestDTO;
 import com.application.api.installment.controllers.dto.ExpenseResponseDTO;
 import com.application.api.installment.controllers.dto.ExpenseUpdateDTO;
-import com.application.api.installment.controllers.mappers.ExpenseMapper;
 import com.application.api.installment.entities.Expense;
 import com.application.api.installment.services.ExpenseService;
 import jakarta.validation.Valid;
@@ -21,11 +20,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ExpenseController {
     private final ExpenseService expenseService;
-    private final ExpenseMapper expenseMapper;
 
     @PostMapping
     public ResponseEntity<Void> createExpense(@RequestBody @Valid ExpenseRequestDTO request) {
-        Expense expense = expenseMapper.dtoToEntity(request);
+        Expense expense = request.toEntity();
         Expense revenueResponse = expenseService.createExpense(expense);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -38,14 +36,14 @@ public class ExpenseController {
     @GetMapping
     public ResponseEntity<List<ExpenseResponseDTO>> getExpenses(@RequestParam(value = "search", required = false) String search) {
         List<Expense> expenses = expenseService.getExpenses(search);
-        List<ExpenseResponseDTO> expenseDtoList = expenses.stream().map(expenseMapper::entityToDto).toList();
+        List<ExpenseResponseDTO> expenseDtoList = expenses.stream().map(ExpenseResponseDTO::new).toList();
         return ResponseEntity.ok(expenseDtoList);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ExpenseResponseDTO> getById(@PathVariable("id") String id) {
         Expense expense = expenseService.getById(UUID.fromString(id));
-        ExpenseResponseDTO response = expenseMapper.entityToDto(expense);
+        ExpenseResponseDTO response = new ExpenseResponseDTO(expense);
         return ResponseEntity.ok(response);
     }
 

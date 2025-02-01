@@ -18,17 +18,24 @@ public class InstallmentServiceImpl implements InstallmentService {
     private final InstallmentRepository installmentRepository;
 
     @Override
-    public Page<Installment> getInstallments(String month, String year, Integer page, Integer pageSize, String search) {
+    public Page<Installment> getInstallments(
+            String month,String year, Integer page,Integer pageSize, String search, String category) {
+
         Specification<Installment> specification = Specification
                 .where((root, query, criteriaBuilder) -> criteriaBuilder.conjunction());
 
-        specification = specification
-                .and(InstallmentSpecification.getByMonth(month))
-                .and(InstallmentSpecification.getByYear(year));
+        if(year != null) {
+            specification = specification.and(InstallmentSpecification.getByYear(year));
+        }
+        if(month != null) {
+            specification = specification.and(InstallmentSpecification.getByMonth(month));
+        }
         if(search != null) {
             specification = specification.and(InstallmentSpecification.titleLike(search));
         }
-
+        if(category != null) {
+            specification = specification.and(InstallmentSpecification.categoryEquals(category));
+        }
         Pageable pageable = PageRequest.of(page, pageSize);
         return installmentRepository.findAll(specification, pageable);
     }

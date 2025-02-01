@@ -30,7 +30,6 @@ public record InstallmentResponseDTO(
                         installment.getExpense().getTitle(),
                         installment.getExpense().getTotalValue(),
                         installment.getExpense().getQuantityInstallments(),
-                        installment.getExpense().getCategory(),
                         installment.getExpense().getInitialDate()
                 )
         );

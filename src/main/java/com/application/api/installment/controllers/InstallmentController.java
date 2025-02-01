@@ -22,10 +22,11 @@ public class InstallmentController {
     public ResponseEntity<Page<InstallmentResponseDTO>> getInstallments(
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "page-size", defaultValue = "6") Integer pageSize,
-            @RequestParam(value = "month", defaultValue = "01") String month,
-            @RequestParam(value = "year", defaultValue = "2025") String year,
-            @RequestParam(value = "search", required = false) String search) {
-        Page<Installment> installments = installmentService.getInstallments(month, year, page, pageSize, search);
+            @RequestParam(value = "month", required = false) String month,
+            @RequestParam(value = "year", required = false) String year,
+            @RequestParam(value = "search", required = false) String search,
+            @RequestParam(value = "category", required = false) String category) {
+        Page<Installment> installments = installmentService.getInstallments(month, year, page, pageSize, search, category);
         Page<InstallmentResponseDTO> installmentResponseDTOPage = installments.map(InstallmentResponseDTO::new);
         return ResponseEntity.ok(installmentResponseDTOPage);
     }
