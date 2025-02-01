@@ -25,7 +25,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString(exclude = "revenue")
+@ToString(exclude = "expense")
 public class Installment {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -51,8 +51,8 @@ public class Installment {
     private LocalDate initialDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "revenue_id")
-    private Revenue revenue;
+    @JoinColumn(name = "expense_id")
+    private Expense expense;
 
     @Column(name = "user_id")
     private UUID userId;

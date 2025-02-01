@@ -29,6 +29,6 @@ public class InstallmentSpecification {
 
     public static Specification<Installment> titleLike(String search) {
         return (root, query, criteriaBuilder) -> criteriaBuilder
-                .like(criteriaBuilder.upper(root.get("revenue").get("title")), "%" + search.toUpperCase() + "%");
+                .like(criteriaBuilder.upper(root.get("expense").get("title")), "%" + search.toUpperCase() + "%");
     }
 }

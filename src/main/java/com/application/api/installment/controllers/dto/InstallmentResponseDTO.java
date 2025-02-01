@@ -14,7 +14,7 @@ public record InstallmentResponseDTO(
         Integer quantityInstallments,
         Boolean isPaid,
         LocalDate initialDate,
-        RevenueResponseDTO revenueResponse) {
+        ExpenseResponseDTO expense) {
 
     public InstallmentResponseDTO(Installment installment) {
         this(
@@ -25,13 +25,13 @@ public record InstallmentResponseDTO(
                 installment.getQuantityInstallments(),
                 installment.isPaid(),
                 installment.getInitialDate(),
-                new RevenueResponseDTO(
-                        installment.getRevenue().getId(),
-                        installment.getRevenue().getTitle(),
-                        installment.getRevenue().getTotalValue(),
-                        installment.getRevenue().getQuantityInstallments(),
-                        installment.getRevenue().getCategory(),
-                        installment.getRevenue().getInitialDate()
+                new ExpenseResponseDTO(
+                        installment.getExpense().getId(),
+                        installment.getExpense().getTitle(),
+                        installment.getExpense().getTotalValue(),
+                        installment.getExpense().getQuantityInstallments(),
+                        installment.getExpense().getCategory(),
+                        installment.getExpense().getInitialDate()
                 )
         );
     }

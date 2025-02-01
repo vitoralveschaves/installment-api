@@ -9,7 +9,7 @@ import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public record RevenueRequestDTO(
+public record ExpenseRequestDTO(
         @NotBlank(message = "Campo obrigatório")
         @Size(min = 2, max = 200)
         String title,

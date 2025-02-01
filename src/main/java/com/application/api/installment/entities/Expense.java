@@ -25,14 +25,14 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "revenue")
+@Table(name = "expense")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(exclude = "installments")
 @EntityListeners(AuditingEntityListener.class)
-public class Revenue {
+public class Expense {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id")
@@ -53,7 +53,7 @@ public class Revenue {
     @Column(name = "category")
     private String category;
 
-    @OneToMany(mappedBy = "revenue", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "expense", fetch = FetchType.LAZY)
     private List<Installment> installments;
 
     @CreatedDate

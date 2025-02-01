@@ -2,5 +2,5 @@ package com.application.api.installment.controllers.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
-public record RevenueUpdateDTO(@NotBlank String title) {
+public record ExpenseUpdateDTO(@NotBlank String title) {
 }
