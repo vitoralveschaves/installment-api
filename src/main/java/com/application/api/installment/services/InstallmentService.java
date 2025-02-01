@@ -6,5 +6,5 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 public interface InstallmentService {
-    Page<Installment> getInstallments(String month, String year, Integer page, Integer pageSize);
+    Page<Installment> getInstallments(String month, String year, Integer page, Integer pageSize, String search);
 }

@@ -1,6 +1,7 @@
 package com.application.api.installment.repositories.specification;
 
 import com.application.api.installment.entities.Installment;
+import com.application.api.installment.entities.Revenue;
 import org.springframework.data.jpa.domain.Specification;
 
 public class InstallmentSpecification {
@@ -25,5 +26,10 @@ public class InstallmentSpecification {
                         criteriaBuilder.literal("YYYY")
                 ), year
         );
+    }
+
+    public static Specification<Installment> titleLike(String search) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder
+                .like(criteriaBuilder.upper(root.get("revenue").get("title")), "%" + search.toUpperCase() + "%");
     }
 }

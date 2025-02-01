@@ -1,15 +1,17 @@
 package com.application.api.installment.services.impl;
 
-import com.application.api.installment.controllers.dto.RevenueResponseDTO;
 import com.application.api.installment.entities.Installment;
 import com.application.api.installment.entities.Revenue;
 import com.application.api.installment.exceptions.RevenueNotFoundException;
 import com.application.api.installment.repositories.InstallmentRepository;
 import com.application.api.installment.repositories.RevenueRepository;
+import com.application.api.installment.repositories.specification.RevenueSpecification;
 import com.application.api.installment.services.RevenueService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -42,8 +44,13 @@ public class RevenueServiceImpl implements RevenueService {
     }
 
     @Override
-    public List<Revenue> getRevenues() {
-        return revenueRepository.findAll();
+    public List<Revenue> getRevenues(String search) {
+        Specification<Revenue> specification = Specification
+                .where((root, query, criteriaBuilder) -> criteriaBuilder.conjunction());
+        if(search != null) {
+            specification = specification.and(RevenueSpecification.titleLike(search));
+        }
+        return revenueRepository.findAll(specification);
     }
 
     @Override

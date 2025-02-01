@@ -23,8 +23,9 @@ public class InstallmentController {
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "page-size", defaultValue = "6") Integer pageSize,
             @RequestParam(value = "month", defaultValue = "01") String month,
-            @RequestParam(value = "year", defaultValue = "2025") String year) {
-        Page<Installment> installments = installmentService.getInstallments(month, year, page, pageSize);
+            @RequestParam(value = "year", defaultValue = "2025") String year,
+            @RequestParam(value = "search", required = false) String search) {
+        Page<Installment> installments = installmentService.getInstallments(month, year, page, pageSize, search);
         Page<InstallmentResponseDTO> installmentResponseDTOPage = installments.map(InstallmentResponseDTO::new);
         return ResponseEntity.ok(installmentResponseDTOPage);
     }
