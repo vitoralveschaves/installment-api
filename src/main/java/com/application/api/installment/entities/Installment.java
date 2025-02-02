@@ -53,7 +53,4 @@ public class Installment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "expense_id")
     private Expense expense;
-
-    @Column(name = "user_id")
-    private UUID userId;
 }

@@ -1,7 +1,5 @@
 package com.application.api.installment.controllers.dto;
 
-
-import com.application.api.installment.entities.Category;
 import com.application.api.installment.entities.Expense;
 
 import java.math.BigDecimal;
