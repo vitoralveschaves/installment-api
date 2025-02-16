@@ -15,6 +15,8 @@ public record ExpenseResponseDTO(
         String category) {
     public ExpenseResponseDTO(Expense expense) {
         this(expense.getId(), expense.getTitle(), expense.getTotalValue(),
-                expense.getQuantityInstallments(), expense.getInitialDate(), expense.getCategory() != null ? expense.getCategory().getName() : null);
+                expense.getQuantityInstallments(), expense.getInitialDate(),
+                expense.getCategory() != null ? expense.getCategory().getName() : null
+        );
     }
 }

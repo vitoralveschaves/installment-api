@@ -1,11 +1,6 @@
 package com.application.api.installment.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,10 +17,12 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(exclude = "installments")
-@EntityListeners(AuditingEntityListener.class)
 public class Expense extends Transaction{
     @Column(name = "quantity_installments")
     private Integer quantityInstallments;
     @OneToMany(mappedBy = "expense", fetch = FetchType.LAZY)
     private List<Installment> installments;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }
