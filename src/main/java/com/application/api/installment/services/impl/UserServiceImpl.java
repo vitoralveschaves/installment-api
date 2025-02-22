@@ -1,9 +1,6 @@
 package com.application.api.installment.services.impl;
 
-import com.application.api.installment.controllers.dto.LoginRequestDto;
-import com.application.api.installment.controllers.dto.LoginResponseDto;
-import com.application.api.installment.controllers.dto.UserRequestDto;
-import com.application.api.installment.controllers.dto.UserResponseDto;
+import com.application.api.installment.controllers.dto.*;
 import com.application.api.installment.entities.Role;
 import com.application.api.installment.entities.User;
 import com.application.api.installment.entities.UserRole;
@@ -55,6 +52,18 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
         addRoleToUser(user.getEmail(), "BASIC");
         return new UserResponseDto(user.getName(), user.getEmail(), user.isActive());
+    }
+
+    @Override
+    @Transactional
+    public RoleResponseDTO registerRole(RoleRequestDTO request) {
+        if(roleRepository.existsByName(request.name().toUpperCase())) {
+            throw new RuntimeException("Role already exists");
+        }
+        Role role = new Role();
+        role.setName(request.name().toUpperCase());
+        roleRepository.save(role);
+        return new RoleResponseDTO(role.getId(), role.getName());
     }
 
     private void addRoleToUser(String email, String roleName) {

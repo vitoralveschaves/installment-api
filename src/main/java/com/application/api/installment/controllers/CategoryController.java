@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value = "/category")
+@RequestMapping("/category")
 @RequiredArgsConstructor
 public class CategoryController {
 

@@ -47,7 +47,7 @@ public class User implements UserDetails {
     private List<Expense> expenses;
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Revenue> revenues;
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<UserRole> userRoles;
     @CreatedDate
     @Column(name = "created_at")
