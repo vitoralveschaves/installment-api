@@ -10,12 +10,18 @@ import com.application.api.installment.repositories.UserRoleRepository;
 import com.application.api.installment.security.TokenService;
 import com.application.api.installment.services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -51,7 +57,36 @@ public class UserServiceImpl implements UserService {
         user.setActive(true);
         userRepository.save(user);
         addRoleToUser(user.getEmail(), "BASIC");
-        return new UserResponseDto(user.getName(), user.getEmail(), user.isActive());
+        return new UserResponseDto(user.getId(), user.getName(), user.getEmail(), user.isActive());
+    }
+
+    @Override
+    public Page<UserResponseDto> getAllPagination(Integer page, Integer pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<User> usersPage = userRepository.findAll(pageable);
+        return usersPage.map(UserResponseDto::new);
+    }
+
+    @Override
+    public List<UserResponseDto> getAll() {
+        List<User> usersList = userRepository.findAll();
+        return usersList.stream().map(UserResponseDto::new).toList();
+    }
+
+    @Override
+    public UserResponseDto getById(UUID id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return new UserResponseDto(user.getId(), user.getName(), user.getEmail(), user.isActive());
+    }
+
+    @Override
+    public void deleteById(UUID id) {
+        boolean isUser = userRepository.existsById(id);
+        if(!isUser) {
+            throw new RuntimeException("User not found");
+        }
+        userRepository.deleteById(id);
     }
 
     @Override

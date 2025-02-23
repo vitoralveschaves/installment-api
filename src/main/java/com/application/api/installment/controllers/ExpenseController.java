@@ -19,7 +19,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/expense")
+@RequestMapping("/expenses")
 @RequiredArgsConstructor
 public class ExpenseController {
     private final ExpenseService expenseService;
