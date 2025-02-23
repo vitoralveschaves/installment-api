@@ -1,7 +1,5 @@
 package com.application.api.installment.controllers;
 
-import com.application.api.installment.controllers.dto.RoleRequestDTO;
-import com.application.api.installment.controllers.dto.RoleResponseDTO;
 import com.application.api.installment.controllers.dto.UserRequestDto;
 import com.application.api.installment.controllers.dto.UserResponseDto;
 import com.application.api.installment.services.UserService;
@@ -32,7 +30,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<UserResponseDto> register(@RequestBody UserRequestDto request) {
+    public ResponseEntity<Void> register(@RequestBody UserRequestDto request) {
         UserResponseDto register = userService.register(request);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -63,11 +61,5 @@ public class UserController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteById(@PathVariable("id") String id) {
         userService.deleteById(UUID.fromString(id));
-    }
-
-    @PostMapping("/register-role")
-    public ResponseEntity<RoleResponseDTO> registerRole(@RequestBody RoleRequestDTO request) {
-        RoleResponseDTO role = userService.registerRole(request);
-        return ResponseEntity.ok(role);
     }
 }

@@ -18,5 +18,4 @@ public interface UserService {
     List<UserResponseDto> getAll();
     UserResponseDto getById(UUID id);
     void deleteById(UUID id);
-    RoleResponseDTO registerRole(RoleRequestDTO request);
 }

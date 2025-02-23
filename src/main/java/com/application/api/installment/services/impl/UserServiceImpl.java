@@ -1,13 +1,14 @@
 package com.application.api.installment.services.impl;
 
-import com.application.api.installment.controllers.dto.*;
-import com.application.api.installment.entities.Role;
+import com.application.api.installment.controllers.dto.LoginRequestDto;
+import com.application.api.installment.controllers.dto.LoginResponseDto;
+import com.application.api.installment.controllers.dto.UserRequestDto;
+import com.application.api.installment.controllers.dto.UserResponseDto;
 import com.application.api.installment.entities.User;
-import com.application.api.installment.entities.UserRole;
 import com.application.api.installment.repositories.RoleRepository;
 import com.application.api.installment.repositories.UserRepository;
-import com.application.api.installment.repositories.UserRoleRepository;
 import com.application.api.installment.security.TokenService;
+import com.application.api.installment.services.RoleService;
 import com.application.api.installment.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -32,7 +33,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
-    private final UserRoleRepository userRoleRepository;
+    private final RoleService roleService;
 
     @Override
     public LoginResponseDto login(LoginRequestDto request) {
@@ -56,7 +57,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(password);
         user.setActive(true);
         userRepository.save(user);
-        addRoleToUser(user.getEmail(), "BASIC");
+        roleService.addRoleToUser(user.getId(), "BASIC");
         return new UserResponseDto(user.getId(), user.getName(), user.getEmail(), user.isActive());
     }
 
@@ -81,35 +82,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void deleteById(UUID id) {
         boolean isUser = userRepository.existsById(id);
         if(!isUser) {
             throw new RuntimeException("User not found");
         }
         userRepository.deleteById(id);
-    }
-
-    @Override
-    @Transactional
-    public RoleResponseDTO registerRole(RoleRequestDTO request) {
-        if(roleRepository.existsByName(request.name().toUpperCase())) {
-            throw new RuntimeException("Role already exists");
-        }
-        Role role = new Role();
-        role.setName(request.name().toUpperCase());
-        roleRepository.save(role);
-        return new RoleResponseDTO(role.getId(), role.getName());
-    }
-
-    private void addRoleToUser(String email, String roleName) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        Role role = roleRepository.findByName(roleName.toUpperCase())
-                .orElseThrow(() -> new RuntimeException("Role not found"));
-
-        UserRole userRole = new UserRole();
-        userRole.setUser(user);
-        userRole.setRole(role);
-        userRoleRepository.save(userRole);
     }
 }
