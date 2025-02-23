@@ -1,11 +1,9 @@
 package com.application.api.installment.services;
 
-import com.application.api.installment.controllers.dto.LoginRequestDto;
-import com.application.api.installment.controllers.dto.LoginResponseDto;
-import com.application.api.installment.controllers.dto.RoleRequestDTO;
-import com.application.api.installment.controllers.dto.RoleResponseDTO;
-import com.application.api.installment.controllers.dto.UserRequestDto;
-import com.application.api.installment.controllers.dto.UserResponseDto;
+import com.application.api.installment.dto.LoginRequestDto;
+import com.application.api.installment.dto.LoginResponseDto;
+import com.application.api.installment.dto.UserRequestDto;
+import com.application.api.installment.dto.UserResponseDto;
 import org.springframework.data.domain.Page;
 
 import java.util.List;

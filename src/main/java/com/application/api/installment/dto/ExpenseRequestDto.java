@@ -1,4 +1,4 @@
-package com.application.api.installment.controllers.dto;
+package com.application.api.installment.dto;
 
 import com.application.api.installment.entities.Expense;
 import jakarta.validation.constraints.NotBlank;
@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
-public record ExpenseRequestDTO(
+public record ExpenseRequestDto(
         @NotBlank(message = "Campo obrigatório")
         @Size(min = 2, max = 200)
         String title,

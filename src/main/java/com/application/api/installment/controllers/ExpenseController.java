@@ -1,8 +1,8 @@
 package com.application.api.installment.controllers;
 
-import com.application.api.installment.controllers.dto.ExpenseRequestDTO;
-import com.application.api.installment.controllers.dto.ExpenseResponseDTO;
-import com.application.api.installment.controllers.dto.ExpenseUpdateDTO;
+import com.application.api.installment.dto.ExpenseRequestDto;
+import com.application.api.installment.dto.ExpenseResponseDto;
+import com.application.api.installment.dto.ExpenseUpdateDto;
 import com.application.api.installment.entities.Category;
 import com.application.api.installment.entities.Expense;
 import com.application.api.installment.services.CategoryService;
@@ -26,7 +26,7 @@ public class ExpenseController {
     private final CategoryService categoryService;
 
     @PostMapping
-    public ResponseEntity<Void> createExpense(@RequestBody @Valid ExpenseRequestDTO request) {
+    public ResponseEntity<Void> createExpense(@RequestBody @Valid ExpenseRequestDto request) {
         Optional<Category> category = categoryService.getById(request.categoryId());
         Expense expense = request.toEntity();
         category.ifPresent(expense::setCategory);
@@ -40,16 +40,16 @@ public class ExpenseController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ExpenseResponseDTO>> getExpenses(@RequestParam(value = "search", required = false) String search) {
+    public ResponseEntity<List<ExpenseResponseDto>> getExpenses(@RequestParam(value = "search", required = false) String search) {
         List<Expense> expenses = expenseService.getExpenses(search);
-        List<ExpenseResponseDTO> expenseDtoList = expenses.stream().map(ExpenseResponseDTO::new).toList();
+        List<ExpenseResponseDto> expenseDtoList = expenses.stream().map(ExpenseResponseDto::new).toList();
         return ResponseEntity.ok(expenseDtoList);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ExpenseResponseDTO> getById(@PathVariable("id") String id) {
+    public ResponseEntity<ExpenseResponseDto> getById(@PathVariable("id") String id) {
         Expense expense = expenseService.getById(UUID.fromString(id));
-        ExpenseResponseDTO response = new ExpenseResponseDTO(expense);
+        ExpenseResponseDto response = new ExpenseResponseDto(expense);
         return ResponseEntity.ok(response);
     }
 
@@ -60,7 +60,7 @@ public class ExpenseController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable("id") String id, @RequestBody @Valid ExpenseUpdateDTO request) {
+    public ResponseEntity<Void> update(@PathVariable("id") String id, @RequestBody @Valid ExpenseUpdateDto request) {
         Expense expense = expenseService.getById(UUID.fromString(id));
         expense.setTitle(request.title());
         expenseService.update(expense);

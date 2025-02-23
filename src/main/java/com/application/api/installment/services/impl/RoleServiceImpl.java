@@ -1,10 +1,12 @@
 package com.application.api.installment.services.impl;
 
-import com.application.api.installment.controllers.dto.RoleRequestDTO;
-import com.application.api.installment.controllers.dto.RoleResponseDTO;
+import com.application.api.installment.dto.RoleRequestDto;
+import com.application.api.installment.dto.RoleResponseDto;
 import com.application.api.installment.entities.Role;
 import com.application.api.installment.entities.User;
 import com.application.api.installment.entities.UserRole;
+import com.application.api.installment.exceptions.AlreadyExistsException;
+import com.application.api.installment.exceptions.NotFoundException;
 import com.application.api.installment.repositories.RoleRepository;
 import com.application.api.installment.repositories.UserRepository;
 import com.application.api.installment.repositories.UserRoleRepository;
@@ -26,22 +28,22 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Transactional
-    public RoleResponseDTO createRole(RoleRequestDTO request) {
+    public RoleResponseDto createRole(RoleRequestDto request) {
         if(roleRepository.existsByName(request.name().toUpperCase())) {
-            throw new RuntimeException("Role already exists");
+            throw new AlreadyExistsException("Role já existe");
         }
         Role role = new Role();
         role.setName(request.name().toUpperCase());
         roleRepository.save(role);
-        return new RoleResponseDTO(role.getId(), role.getName());
+        return new RoleResponseDto(role.getId(), role.getName());
     }
 
     @Override
-    public List<RoleResponseDTO> getAllRoles() {
+    public List<RoleResponseDto> getAllRoles() {
         List<Role> roleList = roleRepository.findAll();
         return roleList
                 .stream()
-                .map(role -> new RoleResponseDTO(role.getId(), role.getName()))
+                .map(role -> new RoleResponseDto(role.getId(), role.getName()))
                 .toList();
     }
 
@@ -49,9 +51,9 @@ public class RoleServiceImpl implements RoleService {
     @Transactional
     public void addRoleToUser(UUID id, String roleName) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("Usuário não encontrado"));
         Role role = roleRepository.findByName(roleName.toUpperCase())
-                .orElseThrow(() -> new RuntimeException("Role not found"));
+                .orElseThrow(() -> new NotFoundException("Role não encontrada"));
 
         UserRole userRole = new UserRole();
         userRole.setUser(user);

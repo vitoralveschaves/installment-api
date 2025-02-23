@@ -1,4 +1,4 @@
-package com.application.api.installment.controllers.dto;
+package com.application.api.installment.dto;
 
 import com.application.api.installment.entities.Category;
 

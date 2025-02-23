@@ -1,4 +1,4 @@
-package com.application.api.installment.controllers.dto;
+package com.application.api.installment.dto;
 
 import com.application.api.installment.entities.Installment;
 
@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
-public record InstallmentResponseDTO(
+public record InstallmentResponseDto(
         UUID id,
         LocalDate currentMonth,
         Integer installmentNumber,
@@ -14,9 +14,9 @@ public record InstallmentResponseDTO(
         Integer quantityInstallments,
         Boolean isPaid,
         LocalDate initialDate,
-        ExpenseResponseDTO expense) {
+        ExpenseResponseDto expense) {
 
-    public InstallmentResponseDTO(Installment installment) {
+    public InstallmentResponseDto(Installment installment) {
         this(
                 installment.getId(),
                 installment.getCurrentMonth(),
@@ -25,7 +25,7 @@ public record InstallmentResponseDTO(
                 installment.getQuantityInstallments(),
                 installment.isPaid(),
                 installment.getInitialDate(),
-                new ExpenseResponseDTO(
+                new ExpenseResponseDto(
                         installment.getExpense().getId(),
                         installment.getExpense().getTitle(),
                         installment.getExpense().getTotalValue(),

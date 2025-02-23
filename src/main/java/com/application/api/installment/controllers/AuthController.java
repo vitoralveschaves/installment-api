@@ -1,7 +1,7 @@
 package com.application.api.installment.controllers;
 
-import com.application.api.installment.controllers.dto.LoginRequestDto;
-import com.application.api.installment.controllers.dto.LoginResponseDto;
+import com.application.api.installment.dto.LoginRequestDto;
+import com.application.api.installment.dto.LoginResponseDto;
 import com.application.api.installment.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

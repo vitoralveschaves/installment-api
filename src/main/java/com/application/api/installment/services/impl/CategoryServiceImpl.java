@@ -1,7 +1,7 @@
 package com.application.api.installment.services.impl;
 
 import com.application.api.installment.entities.Category;
-import com.application.api.installment.exceptions.CategoryNotFoundException;
+import com.application.api.installment.exceptions.NotFoundException;
 import com.application.api.installment.repositories.CategoryRepository;
 import com.application.api.installment.services.CategoryService;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +38,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void deleteCategory(UUID id) {
         if(!categoryRepository.existsById(id)) {
-            throw new CategoryNotFoundException("Categoria não encontrada");
+            throw new NotFoundException("Categoria não encontrada");
         }
         categoryRepository.deleteById(id);
     }

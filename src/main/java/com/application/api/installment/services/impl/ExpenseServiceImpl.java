@@ -2,9 +2,9 @@ package com.application.api.installment.services.impl;
 
 import com.application.api.installment.entities.Expense;
 import com.application.api.installment.entities.Installment;
-import com.application.api.installment.exceptions.ExpenseNotFoundException;
-import com.application.api.installment.repositories.InstallmentRepository;
+import com.application.api.installment.exceptions.NotFoundException;
 import com.application.api.installment.repositories.ExpenseRepository;
+import com.application.api.installment.repositories.InstallmentRepository;
 import com.application.api.installment.repositories.specification.ExpenseSpecification;
 import com.application.api.installment.services.ExpenseService;
 import lombok.RequiredArgsConstructor;
@@ -55,7 +55,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     @Override
     public Expense getById(UUID id) {
         return expenseRepository.findById(id)
-                .orElseThrow(() -> new ExpenseNotFoundException("Despesa não encontrada"));
+                .orElseThrow(() -> new NotFoundException("Despesa não encontrada"));
     }
 
     @Override

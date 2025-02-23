@@ -1,7 +1,7 @@
 package com.application.api.installment.controllers;
 
-import com.application.api.installment.controllers.dto.RoleRequestDTO;
-import com.application.api.installment.controllers.dto.RoleResponseDTO;
+import com.application.api.installment.dto.RoleRequestDto;
+import com.application.api.installment.dto.RoleResponseDto;
 import com.application.api.installment.services.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,8 +28,8 @@ public class RoleController {
     private final RoleService roleService;
 
     @PostMapping
-    public ResponseEntity<Void> createRole(@RequestBody RoleRequestDTO request) {
-        RoleResponseDTO role = roleService.createRole(request);
+    public ResponseEntity<Void> createRole(@RequestBody RoleRequestDto request) {
+        RoleResponseDto role = roleService.createRole(request);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
@@ -39,14 +39,14 @@ public class RoleController {
     }
 
     @GetMapping
-    public ResponseEntity<List<RoleResponseDTO>> getAllRoles() {
-        List<RoleResponseDTO> rolesList = roleService.getAllRoles();
+    public ResponseEntity<List<RoleResponseDto>> getAllRoles() {
+        List<RoleResponseDto> rolesList = roleService.getAllRoles();
         return ResponseEntity.ok(rolesList);
     }
 
     @PutMapping("/{id}/users")
     @ResponseStatus(HttpStatus.OK)
-    public void addRoleToUser(@PathVariable("id") String id, @RequestBody RoleRequestDTO request) {
+    public void addRoleToUser(@PathVariable("id") String id, @RequestBody RoleRequestDto request) {
         roleService.addRoleToUser(UUID.fromString(id), request.name());
     }
 }

@@ -1,7 +1,7 @@
 package com.application.api.installment.controllers;
 
-import com.application.api.installment.controllers.dto.UserRequestDto;
-import com.application.api.installment.controllers.dto.UserResponseDto;
+import com.application.api.installment.dto.UserRequestDto;
+import com.application.api.installment.dto.UserResponseDto;
 import com.application.api.installment.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

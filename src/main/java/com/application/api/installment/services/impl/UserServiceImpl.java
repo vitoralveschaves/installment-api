@@ -1,10 +1,12 @@
 package com.application.api.installment.services.impl;
 
-import com.application.api.installment.controllers.dto.LoginRequestDto;
-import com.application.api.installment.controllers.dto.LoginResponseDto;
-import com.application.api.installment.controllers.dto.UserRequestDto;
-import com.application.api.installment.controllers.dto.UserResponseDto;
+import com.application.api.installment.dto.LoginRequestDto;
+import com.application.api.installment.dto.LoginResponseDto;
+import com.application.api.installment.dto.UserRequestDto;
+import com.application.api.installment.dto.UserResponseDto;
 import com.application.api.installment.entities.User;
+import com.application.api.installment.exceptions.AlreadyExistsException;
+import com.application.api.installment.exceptions.NotFoundException;
 import com.application.api.installment.repositories.RoleRepository;
 import com.application.api.installment.repositories.UserRepository;
 import com.application.api.installment.security.TokenService;
@@ -48,7 +50,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserResponseDto register(UserRequestDto request) {
         if(userRepository.existsByEmail(request.email())) {
-            throw new RuntimeException("User already exists");
+            throw new AlreadyExistsException("Usuário já existe");
         }
         String password = passwordEncoder.encode(request.password());
         User user = new User();
@@ -77,7 +79,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDto getById(UUID id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("Usuário não encontrado"));
         return new UserResponseDto(user.getId(), user.getName(), user.getEmail(), user.isActive());
     }
 
@@ -86,7 +88,7 @@ public class UserServiceImpl implements UserService {
     public void deleteById(UUID id) {
         boolean isUser = userRepository.existsById(id);
         if(!isUser) {
-            throw new RuntimeException("User not found");
+            throw new NotFoundException("Usuário não encontrado");
         }
         userRepository.deleteById(id);
     }

@@ -1,9 +1,9 @@
 package com.application.api.installment.controllers;
 
-import com.application.api.installment.controllers.dto.ErrorResponseDTO;
-import com.application.api.installment.controllers.dto.FieldErrorsDTO;
-import com.application.api.installment.exceptions.CategoryNotFoundException;
-import com.application.api.installment.exceptions.ExpenseNotFoundException;
+import com.application.api.installment.dto.ErrorResponseDto;
+import com.application.api.installment.dto.FieldErrorsDto;
+import com.application.api.installment.exceptions.AlreadyExistsException;
+import com.application.api.installment.exceptions.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,27 +17,35 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    public ErrorResponseDTO handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        List<FieldErrorsDTO> errorsList = e.getFieldErrors()
+    public ErrorResponseDto handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        List<FieldErrorsDto> errorsList = e.getFieldErrors()
                 .stream()
-                .map(error -> new FieldErrorsDTO(
+                .map(error -> new FieldErrorsDto(
                         error.getField(), error.getDefaultMessage())
                 )
                 .toList();
-        return new ErrorResponseDTO(
+        return new ErrorResponseDto(
                 HttpStatus.UNPROCESSABLE_ENTITY.value(), "Erro de validação", errorsList
         );
     }
 
-    @ExceptionHandler(ExpenseNotFoundException.class)
+    @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponseDTO handleRevenueNotFoundException(ExpenseNotFoundException e) {
-        return new ErrorResponseDTO(HttpStatus.NOT_FOUND.value(), e.getMessage(), List.of());
+    public ErrorResponseDto handleNotFoundException(NotFoundException e) {
+        return new ErrorResponseDto(HttpStatus.NOT_FOUND.value(), e.getMessage(), List.of());
     }
 
-    @ExceptionHandler(CategoryNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponseDTO handleRevenueNotFoundException(CategoryNotFoundException e) {
-        return new ErrorResponseDTO(HttpStatus.NOT_FOUND.value(), e.getMessage(), List.of());
+    @ExceptionHandler(AlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponseDto handleAlreadyExistsException(AlreadyExistsException e) {
+        return new ErrorResponseDto(HttpStatus.CONFLICT.value(), e.getMessage(), List.of());
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponseDto handleRuntimeException(Exception e) {
+        return new ErrorResponseDto(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "Ocorreu um erro inesperado: " + e.getMessage(),
+                List.of());
     }
 }
