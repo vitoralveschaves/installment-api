@@ -44,7 +44,7 @@ public class RoleController {
         return ResponseEntity.ok(rolesList);
     }
 
-    @PutMapping("/users/{id}/roles")
+    @PutMapping("/{id}/users")
     @ResponseStatus(HttpStatus.OK)
     public void addRoleToUser(@PathVariable("id") String id, @RequestBody RoleRequestDTO request) {
         roleService.addRoleToUser(UUID.fromString(id), request.name());
