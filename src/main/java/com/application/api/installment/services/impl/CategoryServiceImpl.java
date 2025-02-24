@@ -1,5 +1,7 @@
 package com.application.api.installment.services.impl;
 
+import com.application.api.installment.dto.CategoryRequestDto;
+import com.application.api.installment.dto.CategoryResponseDto;
 import com.application.api.installment.entities.Category;
 import com.application.api.installment.exceptions.NotFoundException;
 import com.application.api.installment.repositories.CategoryRepository;
@@ -18,18 +20,22 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
 
     @Override
-    public Category createCategory(Category category) {
-        return categoryRepository.save(category);
+    public CategoryResponseDto createCategory(CategoryRequestDto request) {
+        Category category = request.toEntity();
+        categoryRepository.save(category);
+        return new CategoryResponseDto(category.getId(), category.getName());
     }
 
     @Override
-    public List<Category> getCategories() {
-        return categoryRepository.findAll();
+    public List<CategoryResponseDto> getCategories() {
+        List<Category> categoryList = categoryRepository.findAll();
+        return categoryList.stream().map(CategoryResponseDto::new).toList();
     }
 
     @Override
     public Optional<Category> getById(UUID id) {
         if(id != null) {
+            System.out.println("entrou aqui");
             return categoryRepository.findById(id);
         }
         return Optional.empty();

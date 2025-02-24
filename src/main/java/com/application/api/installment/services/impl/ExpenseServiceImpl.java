@@ -1,11 +1,16 @@
 package com.application.api.installment.services.impl;
 
+import com.application.api.installment.dto.ExpenseRequestDto;
+import com.application.api.installment.dto.ExpenseResponseDto;
+import com.application.api.installment.dto.ExpenseUpdateDto;
+import com.application.api.installment.entities.Category;
 import com.application.api.installment.entities.Expense;
 import com.application.api.installment.entities.Installment;
 import com.application.api.installment.exceptions.NotFoundException;
 import com.application.api.installment.repositories.ExpenseRepository;
 import com.application.api.installment.repositories.InstallmentRepository;
 import com.application.api.installment.repositories.specification.ExpenseSpecification;
+import com.application.api.installment.services.CategoryService;
 import com.application.api.installment.services.ExpenseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
@@ -15,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -23,10 +29,15 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     private final ExpenseRepository expenseRepository;
     private final InstallmentRepository installmentRepository;
+    private final CategoryService categoryService;
 
     @Override
     @Transactional
-    public Expense createExpense(Expense expense) {
+    public Expense createExpense(ExpenseRequestDto request) {
+        Optional<Category> category = categoryService.getById(request.categoryId());
+        System.out.println(category);
+        Expense expense = request.toEntity();
+        category.ifPresent(expense::setCategory);
         Expense expenseSaved = expenseRepository.save(expense);
         var result = expenseSaved
                 .getTotalValue()
@@ -43,30 +54,36 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
-    public List<Expense> getExpenses(String search) {
+    public List<ExpenseResponseDto> getExpenses(String search) {
         Specification<Expense> specification = Specification
                 .where((root, query, criteriaBuilder) -> criteriaBuilder.conjunction());
         if(search != null) {
             specification = specification.and(ExpenseSpecification.titleLike(search));
         }
-        return expenseRepository.findAll(specification);
+        List<Expense> expensesList = expenseRepository.findAll(specification);
+        return expensesList.stream().map(ExpenseResponseDto::new).toList();
     }
 
     @Override
-    public Expense getById(UUID id) {
-        return expenseRepository.findById(id)
+    public ExpenseResponseDto getById(UUID id) {
+        Expense expense = expenseRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Despesa não encontrada"));
+        return new ExpenseResponseDto(expense);
     }
 
     @Override
     public void delete(UUID id) {
-        Expense expense = getById(id);
+        Expense expense = expenseRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Despesa não encontrada"));
         installmentRepository.deleteInstallmentByExpense(expense);
         expenseRepository.delete(expense);
     }
 
     @Override
-    public void update(Expense expense) {
+    public void update(UUID id, ExpenseUpdateDto request) {
+        Expense expense = expenseRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Despesa não encontrada"));
+        expense.setTitle(request.title());
         expenseRepository.save(expense);
     }
 
