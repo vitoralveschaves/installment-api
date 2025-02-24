@@ -10,6 +10,7 @@ import com.application.api.installment.exceptions.NotFoundException;
 import com.application.api.installment.repositories.ExpenseRepository;
 import com.application.api.installment.repositories.InstallmentRepository;
 import com.application.api.installment.repositories.specification.ExpenseSpecification;
+import com.application.api.installment.security.SecurityService;
 import com.application.api.installment.services.CategoryService;
 import com.application.api.installment.services.ExpenseService;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     private final ExpenseRepository expenseRepository;
     private final InstallmentRepository installmentRepository;
     private final CategoryService categoryService;
+    private final SecurityService securityService;
 
     @Override
     @Transactional
@@ -38,6 +40,8 @@ public class ExpenseServiceImpl implements ExpenseService {
         System.out.println(category);
         Expense expense = request.toEntity();
         category.ifPresent(expense::setCategory);
+        expense.setUser(securityService.getAuthenticationUser());
+
         Expense expenseSaved = expenseRepository.save(expense);
         var result = expenseSaved
                 .getTotalValue()
