@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -49,10 +50,12 @@ public class ExpenseServiceImpl implements ExpenseService {
                         3,
                         RoundingMode.HALF_EVEN
                 );
+        List<Installment> installmentList = new ArrayList<>();
         for (int i = 0; i < expenseSaved.getQuantityInstallments(); i++) {
             Installment installment = createInstallment(expenseSaved, i, result);
-            installmentRepository.save(installment);
+            installmentList.add(installment);
         }
+        installmentRepository.saveAll(installmentList);
         return expenseSaved;
     }
 
