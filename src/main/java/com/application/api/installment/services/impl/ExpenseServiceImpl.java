@@ -37,7 +37,6 @@ public class ExpenseServiceImpl implements ExpenseService {
     @Transactional
     public Expense createExpense(ExpenseRequestDto request) {
         Optional<Category> category = categoryService.getById(request.categoryId());
-        System.out.println(category);
         Expense expense = request.toEntity();
         category.ifPresent(expense::setCategory);
         expense.setUser(securityService.getAuthenticationUser());

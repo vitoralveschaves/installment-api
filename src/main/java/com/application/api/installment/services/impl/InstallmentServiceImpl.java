@@ -3,6 +3,7 @@ package com.application.api.installment.services.impl;
 import com.application.api.installment.entities.Installment;
 import com.application.api.installment.repositories.InstallmentRepository;
 import com.application.api.installment.repositories.specification.InstallmentSpecification;
+import com.application.api.installment.security.SecurityService;
 import com.application.api.installment.services.InstallmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 public class InstallmentServiceImpl implements InstallmentService {
 
     private final InstallmentRepository installmentRepository;
+    private final SecurityService securityService;
 
     @Override
     public Page<Installment> getInstallments(
@@ -23,6 +25,9 @@ public class InstallmentServiceImpl implements InstallmentService {
 
         Specification<Installment> specification = Specification
                 .where((root, query, criteriaBuilder) -> criteriaBuilder.conjunction());
+
+        specification = specification.and(InstallmentSpecification
+                .byUserId(securityService.getAuthenticationUser().getId()));
 
         if(year != null) {
             specification = specification.and(InstallmentSpecification.getByYear(year));
@@ -36,6 +41,7 @@ public class InstallmentServiceImpl implements InstallmentService {
         if(category != null) {
             specification = specification.and(InstallmentSpecification.categoryEquals(category));
         }
+
         Pageable pageable = PageRequest.of(page, pageSize);
         return installmentRepository.findAll(specification, pageable);
     }
