@@ -35,7 +35,6 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Optional<Category> getById(UUID id) {
         if(id != null) {
-            System.out.println("entrou aqui");
             return categoryRepository.findById(id);
         }
         return Optional.empty();

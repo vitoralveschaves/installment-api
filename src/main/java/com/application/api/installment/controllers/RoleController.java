@@ -1,6 +1,7 @@
 package com.application.api.installment.controllers;
 
 import com.application.api.installment.config.SecurityConfig;
+import com.application.api.installment.controllers.swagger.RoleSwagger;
 import com.application.api.installment.dto.RoleRequestDto;
 import com.application.api.installment.dto.RoleResponseDto;
 import com.application.api.installment.services.RoleService;
@@ -26,7 +27,7 @@ import java.util.UUID;
 @RequestMapping("/roles")
 @SecurityRequirement(name = SecurityConfig.SECURITY)
 @RequiredArgsConstructor
-public class RoleController {
+public class RoleController implements RoleSwagger {
 
     private final RoleService roleService;
 

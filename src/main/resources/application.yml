@@ -26,9 +26,9 @@ password:
   user:
     admin: ${PASSWORD_ADMIN}
 springdoc:
+  override-with-generic-response: false
   api-docs:
     enabled: true
   swagger-ui:
     path: /swagger-ui.html
-  default-produces-media-type: application/json
-  paths-to-match: /**
+  packagesToScan: com.application.api.installment.controllers

@@ -1,12 +1,11 @@
 package com.application.api.installment.controllers;
 
-import com.application.api.installment.config.SecurityConfig;
+import com.application.api.installment.controllers.swagger.CategorySwagger;
 import com.application.api.installment.dto.CategoryRequestDto;
 import com.application.api.installment.dto.CategoryResponseDto;
 import com.application.api.installment.entities.Category;
 import com.application.api.installment.exceptions.NotFoundException;
 import com.application.api.installment.services.CategoryService;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,9 +24,8 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/categories")
-@SecurityRequirement(name = SecurityConfig.SECURITY)
 @RequiredArgsConstructor
-public class CategoryController {
+public class CategoryController implements CategorySwagger {
 
     private final CategoryService categoryService;
 

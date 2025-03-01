@@ -1,11 +1,11 @@
 package com.application.api.installment.controllers;
 
 import com.application.api.installment.config.SecurityConfig;
+import com.application.api.installment.controllers.swagger.ExpenseSwagger;
 import com.application.api.installment.dto.ExpenseRequestDto;
 import com.application.api.installment.dto.ExpenseResponseDto;
 import com.application.api.installment.dto.ExpenseUpdateDto;
 import com.application.api.installment.entities.Expense;
-import com.application.api.installment.services.CategoryService;
 import com.application.api.installment.services.ExpenseService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -23,9 +23,8 @@ import java.util.UUID;
 @RequestMapping("/expenses")
 @SecurityRequirement(name = SecurityConfig.SECURITY)
 @RequiredArgsConstructor
-public class ExpenseController {
+public class ExpenseController implements ExpenseSwagger {
     private final ExpenseService expenseService;
-    private final CategoryService categoryService;
 
     @PostMapping
     public ResponseEntity<Void> createExpense(@RequestBody @Valid ExpenseRequestDto request) {

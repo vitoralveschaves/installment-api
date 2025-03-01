@@ -1,6 +1,7 @@
 package com.application.api.installment.controllers;
 
 import com.application.api.installment.config.SecurityConfig;
+import com.application.api.installment.controllers.swagger.UserSwagger;
 import com.application.api.installment.dto.UserRequestDto;
 import com.application.api.installment.dto.UserResponseDto;
 import com.application.api.installment.services.UserService;
@@ -28,7 +29,7 @@ import java.util.UUID;
 @RequestMapping("/users")
 @SecurityRequirement(name = SecurityConfig.SECURITY)
 @RequiredArgsConstructor
-public class UserController {
+public class UserController implements UserSwagger {
 
     private final UserService userService;
 

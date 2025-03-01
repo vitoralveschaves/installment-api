@@ -43,9 +43,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorResponseDto handleBadCredentialsException(BadCredentialsException e) {
-        return new ErrorResponseDto(HttpStatus.BAD_REQUEST.value(), e.getMessage(), List.of());
+        return new ErrorResponseDto(HttpStatus.UNAUTHORIZED.value(), e.getMessage(), List.of());
     }
 
     @ExceptionHandler(Exception.class)

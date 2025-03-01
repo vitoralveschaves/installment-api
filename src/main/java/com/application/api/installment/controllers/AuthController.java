@@ -1,5 +1,6 @@
 package com.application.api.installment.controllers;
 
+import com.application.api.installment.controllers.swagger.AuthSwagger;
 import com.application.api.installment.dto.LoginRequestDto;
 import com.application.api.installment.dto.LoginResponseDto;
 import com.application.api.installment.services.UserService;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-public class AuthController {
+public class AuthController implements AuthSwagger {
     private final UserService userService;
 
     @PostMapping("/login")
