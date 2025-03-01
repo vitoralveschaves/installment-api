@@ -1,12 +1,14 @@
 package com.application.api.installment.security;
 
 import com.application.api.installment.entities.User;
+import com.application.api.installment.exceptions.TokenNotValidException;
 import com.application.api.installment.repositories.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -27,15 +29,24 @@ public class SecurityFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        String token = request.getHeader(AUTHORIZATION);
-        if(token != null) {
-            String tokenWithoutBearer = token.replace(BEARER, "");
-            String email = tokenService.validateToken(tokenWithoutBearer);
-            User user = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-            var auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(auth);
+        try {
+            String token = request.getHeader(AUTHORIZATION);
+            if(token != null) {
+                String tokenWithoutBearer = token.replace(BEARER, "");
+                String email = tokenService.validateToken(tokenWithoutBearer);
+                User user = userRepository.findByEmail(email)
+                        .orElseThrow(() -> new RuntimeException("User not found"));
+                var auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(auth);
+            }
+            filterChain.doFilter(request, response);
+        } catch (TokenNotValidException e) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write(
+                    "{\n \"status\": \"" + HttpStatus.FORBIDDEN.value() + "\"," +
+                            "\n \"message\": \"" + e.getLocalizedMessage() + "\"}"
+            );
         }
-        filterChain.doFilter(request, response);
     }
 }

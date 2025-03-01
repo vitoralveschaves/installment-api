@@ -1,6 +1,7 @@
 package com.application.api.installment.security;
 
 import com.application.api.installment.entities.User;
+import com.application.api.installment.exceptions.TokenNotValidException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
@@ -40,7 +41,7 @@ public class TokenService {
                     .verify(token)
                     .getSubject();
         } catch (JWTVerificationException e) {
-            throw new RuntimeException("Token not valid");
+            throw new TokenNotValidException("Token inválido ou expirado");
         }
     }
 

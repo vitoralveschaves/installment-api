@@ -4,7 +4,9 @@ import com.application.api.installment.dto.ErrorResponseDto;
 import com.application.api.installment.dto.FieldErrorsDto;
 import com.application.api.installment.exceptions.AlreadyExistsException;
 import com.application.api.installment.exceptions.NotFoundException;
+import com.application.api.installment.exceptions.TokenNotValidException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -41,11 +43,17 @@ public class GlobalExceptionHandler {
         return new ErrorResponseDto(HttpStatus.CONFLICT.value(), e.getMessage(), List.of());
     }
 
+    @ExceptionHandler(BadCredentialsException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponseDto handleBadCredentialsException(BadCredentialsException e) {
+        return new ErrorResponseDto(HttpStatus.BAD_REQUEST.value(), e.getMessage(), List.of());
+    }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponseDto handleRuntimeException(Exception e) {
         return new ErrorResponseDto(HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "Ocorreu um erro inesperado: " + e.getMessage(),
+                "Ocorreu um erro inesperado: " + e.getMessage() + " " + e.getClass(),
                 List.of());
     }
 }

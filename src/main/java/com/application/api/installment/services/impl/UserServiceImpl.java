@@ -17,6 +17,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,11 +41,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public LoginResponseDto login(LoginRequestDto request) {
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(request.email(), request.password());
-        Authentication authenticate = authenticationManager.authenticate(auth);
-        User user = (User) authenticate.getPrincipal();
-        String token = tokenService.generateToken(user);
-        return new LoginResponseDto(token);
+        try {
+            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(request.email(), request.password());
+            Authentication authenticate = authenticationManager.authenticate(auth);
+            User user = (User) authenticate.getPrincipal();
+            String token = tokenService.generateToken(user);
+            return new LoginResponseDto(token);
+        } catch (InternalAuthenticationServiceException e) {
+            throw new BadCredentialsException("Usuário inexistente ou senha inválida");
+        }
     }
 
     @Override
