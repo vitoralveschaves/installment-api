@@ -4,7 +4,6 @@ import com.application.api.installment.dto.ErrorResponseDto;
 import com.application.api.installment.dto.FieldErrorsDto;
 import com.application.api.installment.exceptions.AlreadyExistsException;
 import com.application.api.installment.exceptions.NotFoundException;
-import com.application.api.installment.exceptions.TokenNotValidException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;

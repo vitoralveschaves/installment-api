@@ -2,6 +2,8 @@ package com.application.api.installment.config;
 
 import com.application.api.installment.security.LoginSocialService;
 import com.application.api.installment.security.SecurityFilter;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,8 +21,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@SecurityScheme(name = SecurityConfig.SECURITY, type = SecuritySchemeType.HTTP, bearerFormat = "JWT", scheme = "bearer")
 @RequiredArgsConstructor
 public class SecurityConfig {
+
+    public static final String SECURITY = "bearerAuth";
 
     private final SecurityFilter securityFilter;
     private final LoginSocialService loginSocialService;
@@ -34,6 +39,7 @@ public class SecurityConfig {
                 })
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers(HttpMethod.POST, "/auth/**").permitAll();
+                    auth.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-resources/**").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

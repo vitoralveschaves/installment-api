@@ -1,11 +1,13 @@
 package com.application.api.installment.controllers;
 
+import com.application.api.installment.config.SecurityConfig;
 import com.application.api.installment.dto.ExpenseRequestDto;
 import com.application.api.installment.dto.ExpenseResponseDto;
 import com.application.api.installment.dto.ExpenseUpdateDto;
 import com.application.api.installment.entities.Expense;
 import com.application.api.installment.services.CategoryService;
 import com.application.api.installment.services.ExpenseService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,6 +21,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/expenses")
+@SecurityRequirement(name = SecurityConfig.SECURITY)
 @RequiredArgsConstructor
 public class ExpenseController {
     private final ExpenseService expenseService;

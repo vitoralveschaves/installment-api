@@ -1,8 +1,10 @@
 package com.application.api.installment.controllers;
 
+import com.application.api.installment.config.SecurityConfig;
 import com.application.api.installment.dto.RoleRequestDto;
 import com.application.api.installment.dto.RoleResponseDto;
 import com.application.api.installment.services.RoleService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/roles")
+@SecurityRequirement(name = SecurityConfig.SECURITY)
 @RequiredArgsConstructor
 public class RoleController {
 

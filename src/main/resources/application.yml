@@ -25,3 +25,10 @@ secret:
 password:
   user:
     admin: ${PASSWORD_ADMIN}
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+  default-produces-media-type: application/json
+  paths-to-match: /**

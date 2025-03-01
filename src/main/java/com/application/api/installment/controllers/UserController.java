@@ -1,8 +1,10 @@
 package com.application.api.installment.controllers;
 
+import com.application.api.installment.config.SecurityConfig;
 import com.application.api.installment.dto.UserRequestDto;
 import com.application.api.installment.dto.UserResponseDto;
 import com.application.api.installment.services.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -24,6 +26,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
+@SecurityRequirement(name = SecurityConfig.SECURITY)
 @RequiredArgsConstructor
 public class UserController {
 

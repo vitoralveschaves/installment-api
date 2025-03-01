@@ -3,19 +3,14 @@ package com.application.api.installment.security;
 import com.application.api.installment.entities.User;
 import com.application.api.installment.repositories.UserRepository;
 import com.application.api.installment.services.RoleService;
-import com.application.api.installment.services.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
-import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -49,7 +44,6 @@ public class LoginSocialService extends SavedRequestAwareAuthenticationSuccessHa
 
         String userToken = tokenService.generateToken(user.get());
 
-        // Retorna o token no response
         response.setContentType("application/json");
         response.getWriter().write("{\"token\": \"" + userToken + "\"}");
         response.getWriter().flush();
