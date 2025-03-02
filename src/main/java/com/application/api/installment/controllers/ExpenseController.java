@@ -23,6 +23,7 @@ import java.util.UUID;
 @RequestMapping("/expenses")
 @SecurityRequirement(name = SecurityConfig.SECURITY)
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class ExpenseController implements ExpenseSwagger {
     private final ExpenseService expenseService;
 
