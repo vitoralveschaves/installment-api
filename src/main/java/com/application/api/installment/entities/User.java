@@ -22,7 +22,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -33,7 +32,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString(exclude = {"expenses", "revenues"})
+@ToString(exclude = {"expenses", "revenues", "userRoles"})
 @EntityListeners(AuditingEntityListener.class)
 public class User implements UserDetails {
     @Id
@@ -51,8 +50,8 @@ public class User implements UserDetails {
     private List<Expense> expenses;
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Revenue> revenues;
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private List<UserRole> userRoles = new ArrayList<>();
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<UserRole> userRoles;
     @CreatedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt;

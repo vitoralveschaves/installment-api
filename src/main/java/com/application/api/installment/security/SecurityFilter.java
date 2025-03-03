@@ -34,7 +34,7 @@ public class SecurityFilter extends OncePerRequestFilter {
             if(token != null) {
                 String tokenWithoutBearer = token.replace(BEARER, "");
                 String email = tokenService.validateToken(tokenWithoutBearer);
-                User user = userRepository.findByEmail(email)
+                User user = userRepository.findByEmailWithRoles(email)
                         .orElseThrow(() -> new RuntimeException("User not found"));
                 var auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(auth);

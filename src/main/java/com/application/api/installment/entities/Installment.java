@@ -2,7 +2,6 @@ package com.application.api.installment.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,7 +24,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString(exclude = "expense")
+@ToString
 public class Installment {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -50,7 +49,7 @@ public class Installment {
     @Column(name = "initial_date", nullable = false)
     private LocalDate initialDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "expense_id")
     private Expense expense;
 }

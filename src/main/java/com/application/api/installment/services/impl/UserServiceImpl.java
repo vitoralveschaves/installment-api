@@ -24,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,11 +45,12 @@ public class UserServiceImpl implements UserService {
             Authentication authenticate = authenticationManager.authenticate(auth);
             User user = (User) authenticate.getPrincipal();
             String token = tokenService.generateToken(user);
+            Long expiresAt = tokenService.getExpiresAt(token);
             List<String> roles = user.getUserRoles()
                     .stream()
                     .map(role -> role.getRole().getName())
                     .toList();
-            return new LoginResponseDto(user.getName(), user.getEmail(), roles, token);
+            return new LoginResponseDto(user.getName(), user.getEmail(), roles, token, expiresAt);
         } catch (InternalAuthenticationServiceException e) {
             throw new BadCredentialsException("Usuário inexistente ou senha inválida");
         }
