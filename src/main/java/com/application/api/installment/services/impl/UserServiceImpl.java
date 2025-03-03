@@ -7,7 +7,6 @@ import com.application.api.installment.dto.UserResponseDto;
 import com.application.api.installment.entities.User;
 import com.application.api.installment.exceptions.AlreadyExistsException;
 import com.application.api.installment.exceptions.NotFoundException;
-import com.application.api.installment.repositories.RoleRepository;
 import com.application.api.installment.repositories.UserRepository;
 import com.application.api.installment.security.TokenService;
 import com.application.api.installment.services.RoleService;
@@ -36,7 +35,6 @@ public class UserServiceImpl implements UserService {
     private final TokenService tokenService;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final RoleRepository roleRepository;
     private final RoleService roleService;
 
     @Override
@@ -46,7 +44,11 @@ public class UserServiceImpl implements UserService {
             Authentication authenticate = authenticationManager.authenticate(auth);
             User user = (User) authenticate.getPrincipal();
             String token = tokenService.generateToken(user);
-            return new LoginResponseDto(token);
+            List<String> roles = user.getUserRoles()
+                    .stream()
+                    .map(role -> role.getRole().getName())
+                    .toList();
+            return new LoginResponseDto(user.getName(), user.getEmail(), roles, token);
         } catch (InternalAuthenticationServiceException e) {
             throw new BadCredentialsException("Usuário inexistente ou senha inválida");
         }

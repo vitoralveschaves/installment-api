@@ -55,6 +55,10 @@ public class RoleServiceImpl implements RoleService {
         Role role = roleRepository.findByName(roleName.toUpperCase())
                 .orElseThrow(() -> new NotFoundException("Role não encontrada"));
 
+        if(user.getUserRoles().stream().anyMatch(r -> r.getRole() == role)) {
+            throw new AlreadyExistsException("Usuário já possui essa Role");
+        }
+
         UserRole userRole = new UserRole();
         userRole.setUser(user);
         userRole.setRole(role);

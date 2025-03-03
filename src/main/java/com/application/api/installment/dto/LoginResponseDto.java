@@ -1,4 +1,9 @@
 package com.application.api.installment.dto;
 
-public record LoginResponseDto(String accessToken) {
+import java.util.List;
+
+public record LoginResponseDto(String name,
+                               String email,
+                               List<String> roles,
+                               String accessToken) {
 }
