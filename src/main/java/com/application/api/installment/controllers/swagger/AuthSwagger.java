@@ -43,5 +43,4 @@ public interface AuthSwagger {
             }
     )
     ResponseEntity<LoginResponseDto> login(LoginRequestDto request);
-
 }

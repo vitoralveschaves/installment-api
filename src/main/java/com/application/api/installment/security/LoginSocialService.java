@@ -28,8 +28,7 @@ public class LoginSocialService extends SavedRequestAwareAuthenticationSuccessHa
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
-                                        Authentication authentication)
-            throws ServletException, IOException {
+                                        Authentication authentication) throws ServletException, IOException {
 
         OAuth2AuthenticationToken token = (OAuth2AuthenticationToken) authentication;
         OAuth2User oAuth2User = token.getPrincipal();
@@ -59,5 +58,4 @@ public class LoginSocialService extends SavedRequestAwareAuthenticationSuccessHa
         roleService.addRoleToUser(user.getId(), "BASIC");
         return user;
     }
-
 }

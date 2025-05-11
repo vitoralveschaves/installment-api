@@ -6,6 +6,7 @@ import com.application.api.installment.dto.UserRequestDto;
 import com.application.api.installment.dto.UserResponseDto;
 import com.application.api.installment.services.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -27,7 +28,7 @@ public class UserController implements UserSwagger {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<Void> register(@RequestBody UserRequestDto request) {
+    public ResponseEntity<Void> register(@RequestBody @Valid UserRequestDto request) {
         UserResponseDto register = userService.register(request);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
