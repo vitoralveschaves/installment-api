@@ -1,6 +1,15 @@
 package com.application.api.installment.dto;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.ToString;
+
 import java.util.UUID;
 
-public record RoleResponseDto(UUID id, String name) {
+@Getter
+@Builder
+@ToString
+public class RoleResponseDto {
+    private UUID id;
+    private String name;
 }

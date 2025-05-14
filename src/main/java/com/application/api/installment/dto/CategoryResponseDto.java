@@ -1,11 +1,17 @@
 package com.application.api.installment.dto;
 
-import com.application.api.installment.entities.Category;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.ToString;
 
 import java.util.UUID;
 
-public record CategoryResponseDto(UUID id, String name) {
-    public CategoryResponseDto(Category category) {
-        this(category.getId(), category.getName());
-    }
+@Getter
+@Builder
+@ToString
+public class CategoryResponseDto {
+
+    private UUID id;
+
+    private String name;
 }

@@ -1,12 +1,17 @@
 package com.application.api.installment.dto;
 
-import com.application.api.installment.entities.Category;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-public record CategoryRequestDto(@NotBlank(message = "Campo obrigatório") String name) {
-    public Category toEntity() {
-        Category category = new Category();
-        category.setName(this.name);
-        return category;
-    }
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+public class CategoryRequestDto{
+
+    @NotBlank(message = "Campo obrigatório")
+    private String name;
 }

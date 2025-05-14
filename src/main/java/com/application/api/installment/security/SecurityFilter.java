@@ -1,8 +1,8 @@
 package com.application.api.installment.security;
 
-import com.application.api.installment.entities.User;
-import com.application.api.installment.exceptions.TokenNotValidException;
-import com.application.api.installment.repositories.UserRepository;
+import com.application.api.installment.model.User;
+import com.application.api.installment.exception.TokenNotValidException;
+import com.application.api.installment.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

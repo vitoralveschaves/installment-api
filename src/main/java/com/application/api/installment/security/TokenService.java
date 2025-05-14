@@ -1,7 +1,7 @@
 package com.application.api.installment.security;
 
-import com.application.api.installment.entities.User;
-import com.application.api.installment.exceptions.TokenNotValidException;
+import com.application.api.installment.model.User;
+import com.application.api.installment.exception.TokenNotValidException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Date;
 
 @Service
 public class TokenService {

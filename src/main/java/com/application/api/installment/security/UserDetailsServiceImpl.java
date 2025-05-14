@@ -1,7 +1,7 @@
 package com.application.api.installment.security;
 
-import com.application.api.installment.exceptions.NotFoundException;
-import com.application.api.installment.repositories.UserRepository;
+import com.application.api.installment.exception.NotFoundException;
+import com.application.api.installment.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -1,15 +1,28 @@
 package com.application.api.installment.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.List;
 
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@ToString
 @Schema(description = "Modelo de resposta para erros")
-public record ErrorResponseDto(
+public class ErrorResponseDto {
+
         @Schema(description = "Código de status HTTP")
-        Integer status,
+        private Integer status;
+
         @Schema(description = "Mensagem de erro")
-        String message,
+        private String message;
+
         @Schema(description = "Listagem de erros")
-        List<FieldErrorsDto> errors) {
+        private List<FieldErrorsDto> errors;
 }

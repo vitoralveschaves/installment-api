@@ -1,7 +1,7 @@
 package com.application.api.installment.security;
 
-import com.application.api.installment.entities.User;
-import com.application.api.installment.exceptions.NotFoundException;
+import com.application.api.installment.model.User;
+import com.application.api.installment.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;

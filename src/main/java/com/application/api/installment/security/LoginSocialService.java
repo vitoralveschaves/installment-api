@@ -1,8 +1,8 @@
 package com.application.api.installment.security;
 
-import com.application.api.installment.entities.User;
-import com.application.api.installment.repositories.UserRepository;
-import com.application.api.installment.services.RoleService;
+import com.application.api.installment.model.User;
+import com.application.api.installment.repository.UserRepository;
+import com.application.api.installment.service.RoleService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -49,12 +49,15 @@ public class LoginSocialService extends SavedRequestAwareAuthenticationSuccessHa
     }
 
     private User createNewUser(OAuth2User oAuth2User) {
-        User user = new User();
-        user.setEmail(oAuth2User.getAttribute("email"));
-        user.setName(oAuth2User.getAttribute("name"));
-        user.setPassword(UUID.randomUUID().toString());
-        user.setActive(true);
+        var user = User.builder()
+                .email(oAuth2User.getAttribute("email"))
+                .name(oAuth2User.getAttribute("name"))
+                .password(UUID.randomUUID().toString())
+                .active(true)
+                .build();
+
         userRepository.save(user);
+
         roleService.addRoleToUser(user.getId(), "BASIC");
         return user;
     }
