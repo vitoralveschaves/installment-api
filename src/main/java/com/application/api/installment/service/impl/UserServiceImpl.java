@@ -1,15 +1,12 @@
 package com.application.api.installment.service.impl;
 
-import com.application.api.installment.converter.LoginResponseConverter;
 import com.application.api.installment.converter.UserEntityConverter;
 import com.application.api.installment.converter.UserResponseConverter;
-import com.application.api.installment.dto.LoginRequestDto;
-import com.application.api.installment.dto.LoginResponseDto;
 import com.application.api.installment.dto.UserRequestDto;
 import com.application.api.installment.dto.UserResponseDto;
-import com.application.api.installment.model.User;
 import com.application.api.installment.exception.AlreadyExistsException;
 import com.application.api.installment.exception.NotFoundException;
+import com.application.api.installment.model.User;
 import com.application.api.installment.repository.UserRepository;
 import com.application.api.installment.service.RoleService;
 import com.application.api.installment.service.UserService;
@@ -19,11 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,33 +29,12 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
-    private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final RoleService roleService;
     private final UserEntityConverter userEntityConverter;
     private final UserResponseConverter userResponseConverter;
-    private final LoginResponseConverter loginResponseConverter;
+    private final PasswordEncoder passwordEncoder;
 
-    @Override
-    public LoginResponseDto login(LoginRequestDto request) {
-        try {
-            LOGGER.info("stage=init method=UserServiceImpl.login email={}", request.getEmail());
-            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                    request.getEmail(), request.getPassword());
-
-            Authentication authenticate = authenticationManager.authenticate(auth);
-
-            User user = (User) authenticate.getPrincipal();
-            var response = loginResponseConverter.apply(user);
-
-            LOGGER.info("stage=end method=UserServiceImpl.login message=User authenticated userName={}", response.getName());
-            return response;
-
-        } catch (InternalAuthenticationServiceException e) {
-            LOGGER.error("stage=error method=UserServiceImpl.login message=Invalid email or password");
-            throw new BadCredentialsException("Invalid email or password");
-        }
-    }
 
     @Override
     @Transactional
@@ -98,7 +70,7 @@ public class UserServiceImpl implements UserService {
         LOGGER.info("stage=init method=UserServiceImpl.getAllPagination");
 
         Pageable pageable = PageRequest.of(page, pageSize);
-        Page<User> usersPage = userRepository.findAll(pageable);
+        Page<User> usersPage = userRepository.findAllActivesUsersPagination(pageable);
 
         var usersPageable = usersPage.map(userResponseConverter);
 
@@ -112,7 +84,7 @@ public class UserServiceImpl implements UserService {
 
         LOGGER.info("stage=init method=UserServiceImpl.getAll");
 
-        List<User> usersList = userRepository.findAll();
+        List<User> usersList = userRepository.findAllActivesUsers();
 
         var users = usersList.stream().map(userResponseConverter).toList();
         LOGGER.info("stage=end method=UserServiceImpl.getAll message=All users fetched");
@@ -128,11 +100,34 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id).orElseGet(() -> {
             LOGGER.error("stage=error method=UserServiceImpl.getById message=User not found");
             throw new NotFoundException("User not found");
-        });
+        });;
 
         var response = userResponseConverter.apply(user);
 
         LOGGER.info("stage=end method=UserServiceImpl.getById message=User fetched userName={}", response.getName());
+        return response;
+    }
+
+    @Override
+    public UserResponseDto getActiveUserById(UUID id) {
+
+        LOGGER.info("stage=init method=UserServiceImpl.getActiveUserById userId={}", id);
+
+        User user = findActiveUserById(id);
+        var response = userResponseConverter.apply(user);
+
+        LOGGER.info("stage=end method=UserServiceImpl.getActiveUserById message=User fetched userName={}", response.getName());
+        return response;
+    }
+
+    @Override
+    public UserResponseDto getActiveUserByEmail(String email) {
+        LOGGER.info("stage=init method=UserServiceImpl.getActiveUserByEmail email={}", email);
+
+        User user = findActiveUserByEmail(email);
+        var response = userResponseConverter.apply(user);
+
+        LOGGER.info("stage=end method=UserServiceImpl.getActiveUserByEmail message=User fetched userName={}", response.getName());
         return response;
     }
 
@@ -142,12 +137,67 @@ public class UserServiceImpl implements UserService {
 
         LOGGER.info("stage=init method=UserServiceImpl.deleteById userId={}", id);
 
-        if(!userRepository.existsById(id)) {
-            LOGGER.error("stage=error method=UserServiceImpl.deleteById message=User not found");
-            throw new NotFoundException("User not found");
-        }
+        User user = findActiveUserById(id);
 
-        userRepository.deleteById(id);
+        inactiveOrActiveUser(user);
         LOGGER.info("stage=end method=UserServiceImpl.deleteById message=User deleted");
+    }
+
+    @Override
+    @Transactional
+    public void deleteByEmail(String email) {
+
+        LOGGER.info("stage=init method=UserServiceImpl.deleteByEmail email={}", email);
+
+        User user = findActiveUserByEmail(email);
+
+        inactiveOrActiveUser(user);
+        LOGGER.info("stage=end method=UserServiceImpl.deleteByEmail message=User deleted");
+    }
+
+    @Override
+    @Transactional
+    public void activeByEmail(String email) {
+
+        LOGGER.info("stage=init method=UserServiceImpl.activeByEmail email={}", email);
+
+        User user = userRepository.findInactiveUserByEmail(email).orElseGet(() -> {
+            LOGGER.error("stage=error method=UserServiceImpl.activeByEmail message=User not found");
+            throw new NotFoundException("User not found");
+        });;
+
+        inactiveOrActiveUser(user);
+        LOGGER.info("stage=end method=UserServiceImpl.activeByEmail message=User activated");
+    }
+
+    private User findActiveUserById(UUID id) {
+
+        LOGGER.error("stage=init method=UserServiceImpl.findActiveUserById id={}", id);
+
+        User user = userRepository.findActiveUserById(id).orElseGet(() -> {
+            LOGGER.error("stage=error method=UserServiceImpl.findActiveUserById message=User not found");
+            throw new NotFoundException("User not found");
+        });
+
+        LOGGER.error("stage=end method=UserServiceImpl.findActiveUserById userName={}", user.getName());
+        return user;
+    }
+
+    private User findActiveUserByEmail(String email) {
+
+        LOGGER.error("stage=init method=UserServiceImpl.findActiveUserByEmail email={}", email);
+
+        User user = userRepository.findActiveUserByEmail(email).orElseGet(() -> {
+            LOGGER.error("stage=error method=UserServiceImpl.findActiveUserByEmail message=User not found");
+            throw new NotFoundException("User not found");
+        });
+
+        LOGGER.error("stage=end method=UserServiceImpl.findActiveUserByEmail userName={}", user.getName());
+        return user;
+    }
+
+    private void inactiveOrActiveUser(User user) {
+        user.setActive(!user.isActive());
+        userRepository.save(user);
     }
 }
