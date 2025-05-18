@@ -15,7 +15,7 @@ import java.util.UUID;
 @Builder
 public class InstallmentResponseDto {
 
-    private UUID id;
+    private UUID installmentId;
 
     private LocalDate currentMonth;
 

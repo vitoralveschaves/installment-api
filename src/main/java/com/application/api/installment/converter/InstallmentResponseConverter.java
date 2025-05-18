@@ -16,7 +16,7 @@ public class InstallmentResponseConverter implements Function<Installment, Insta
     @Override
     public InstallmentResponseDto apply(Installment installment) {
         return InstallmentResponseDto.builder()
-                .id(installment.getId())
+                .installmentId(installment.getId())
                 .currentMonth(installment.getCurrentMonth())
                 .installmentNumber(installment.getInstallmentNumber())
                 .installmentValue(installment.getInstallmentValue())

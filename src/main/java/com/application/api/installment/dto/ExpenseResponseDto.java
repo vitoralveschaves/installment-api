@@ -17,7 +17,7 @@ import java.util.UUID;
 @ToString
 public class ExpenseResponseDto {
 
-    private UUID id;
+    private UUID expenseId;
 
     private String title;
 
@@ -28,5 +28,4 @@ public class ExpenseResponseDto {
     private LocalDate initialDate;
 
     private String category;
-
 }
