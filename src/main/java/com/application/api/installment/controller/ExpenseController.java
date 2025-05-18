@@ -31,7 +31,7 @@ public class ExpenseController implements ExpenseSwagger {
     @PostMapping
     public ResponseEntity<Void> createExpense(@RequestBody @Valid ExpenseRequestDto request) {
         ExpenseResponseDto expenseResponse = expenseService.createExpense(request);
-        URI location = locationBuilderUtil.buildLocation(expenseResponse.getId());
+        URI location = locationBuilderUtil.buildLocation(expenseResponse.getExpenseId());
         return ResponseEntity.created(location).build();
     }
 

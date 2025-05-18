@@ -6,6 +6,7 @@ import com.application.api.installment.dto.UserRequestDto;
 import com.application.api.installment.dto.UserResponseDto;
 import com.application.api.installment.service.UserService;
 import com.application.api.installment.util.LocationBuilderUtil;
+import com.application.api.installment.util.PaginationUtils;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ public class UserController implements UserSwagger {
 
     private final UserService userService;
     private final LocationBuilderUtil locationUtils;
+    private final PaginationUtils paginationUtils;
 
     @PostMapping
     public ResponseEntity<Void> register(@RequestBody @Valid UserRequestDto request) {
@@ -37,8 +39,8 @@ public class UserController implements UserSwagger {
 
     @GetMapping
     public ResponseEntity<Object> getAll(@RequestParam(value = "page", required = false) Integer page,
-                                       @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        if(page != null || pageSize != null) {
+                                       @RequestParam(value = "quantity", defaultValue = "6") Integer pageSize) {
+        if(paginationUtils.isAbleToPagination(page, pageSize)) {
             Page<UserResponseDto> usersPagination = userService.getAllPagination(page, pageSize);
             return ResponseEntity.ok(usersPagination);
         }

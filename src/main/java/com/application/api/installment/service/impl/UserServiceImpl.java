@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +32,6 @@ public class UserServiceImpl implements UserService {
     private final RoleService roleService;
     private final UserEntityConverter userEntityConverter;
     private final UserResponseConverter userResponseConverter;
-    private final PasswordEncoder passwordEncoder;
 
 
     @Override
@@ -69,7 +67,7 @@ public class UserServiceImpl implements UserService {
 
         LOGGER.info("stage=init method=UserServiceImpl.getAllPagination");
 
-        Pageable pageable = PageRequest.of(page, pageSize);
+        Pageable pageable = PageRequest.of((page - 1), pageSize);
         Page<User> usersPage = userRepository.findAllActivesUsersPagination(pageable);
 
         var usersPageable = usersPage.map(userResponseConverter);

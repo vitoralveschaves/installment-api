@@ -12,9 +12,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface UserRepository extends JpaRepository<User, UUID> {
+
     @Query("SELECT u from User u JOIN FETCH u.userRoles ur JOIN FETCH ur.role WHERE u.email = :email")
     Optional<User> findByEmailWithRoles(@Param("email") String email);
+
     Optional<User> findByEmail(String email);
+
     boolean existsByEmail(String email);
 
     @Query("SELECT u from User u WHERE u.active = true")
@@ -31,5 +34,4 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     @Query("SELECT u from User u WHERE u.email = :email AND u.active = false")
     Optional<User> findInactiveUserByEmail(@Param("email") String email);
-
 }

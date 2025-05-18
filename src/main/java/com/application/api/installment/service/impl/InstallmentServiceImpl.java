@@ -7,11 +7,11 @@ import com.application.api.installment.repository.InstallmentRepository;
 import com.application.api.installment.repository.specification.InstallmentSpecification;
 import com.application.api.installment.security.SecurityService;
 import com.application.api.installment.service.InstallmentService;
+import com.application.api.installment.util.PaginationUtils;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -24,6 +24,7 @@ public class InstallmentServiceImpl implements InstallmentService {
     private final InstallmentRepository installmentRepository;
     private final SecurityService securityService;
     private final InstallmentResponseConverter installmentResponseConverter;
+    private final PaginationUtils paginationUtils;
 
     @Override
     public Page<InstallmentResponseDto> getInstallments(
@@ -33,7 +34,8 @@ public class InstallmentServiceImpl implements InstallmentService {
 
         var specification = filter(month, year, search, category);
 
-        Pageable pageable = PageRequest.of(page, pageSize);
+        Pageable pageable = paginationUtils.getPageable(page, pageSize);
+
         var installments = installmentRepository.findAll(specification, pageable);
 
         Page<InstallmentResponseDto> response = installments.map(installmentResponseConverter);
