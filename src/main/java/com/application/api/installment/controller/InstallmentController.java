@@ -23,7 +23,7 @@ public class InstallmentController implements InstallmentSwagger {
     @GetMapping
     public ResponseEntity<Page<InstallmentResponseDto>> getInstallments(
             @RequestParam(value = "page", defaultValue = "0") Integer page,
-            @RequestParam(value = "page-size", defaultValue = "6") Integer pageSize,
+            @RequestParam(value = "quantity", defaultValue = "6") Integer pageSize,
             @RequestParam(value = "month", required = false) String month,
             @RequestParam(value = "year", required = false) String year,
             @RequestParam(value = "search", required = false) String search,
