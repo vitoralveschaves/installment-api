@@ -1,8 +1,10 @@
 package com.application.api.installment.service.impl;
 
 import com.application.api.installment.converter.InstallmentResponseConverter;
+import com.application.api.installment.dto.InstallmentBalanceResponseDto;
 import com.application.api.installment.dto.InstallmentResponseDto;
 import com.application.api.installment.model.Installment;
+import com.application.api.installment.model.User;
 import com.application.api.installment.repository.InstallmentRepository;
 import com.application.api.installment.repository.specification.InstallmentSpecification;
 import com.application.api.installment.security.SecurityService;
@@ -15,6 +17,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +38,7 @@ public class InstallmentServiceImpl implements InstallmentService {
 
         LOGGER.info("stage=init method=InstallmentServiceImpl.getInstallments");
 
-        var specification = filter(month, year, search, category);
+        var specification = filterInstallments(month, year, search, category);
 
         Pageable pageable = paginationUtils.getPageable(page, pageSize);
 
@@ -41,11 +47,36 @@ public class InstallmentServiceImpl implements InstallmentService {
         Page<InstallmentResponseDto> response = installments.map(installmentResponseConverter);
 
         LOGGER.info("stage=end method=InstallmentServiceImpl.getInstallments");
-
         return response;
     }
 
-    private Specification<Installment> filter(String month,String year, String search, String category) {
+    @Override
+    public InstallmentBalanceResponseDto getInstallmentBalance(String month) {
+
+        LOGGER.info("stage=init method=InstallmentServiceImpl.getInstallmentBalance");
+        var user = securityService.getAuthenticationUser();
+
+        BigDecimal installmentsBalanceValue = Optional
+                .ofNullable(getInstallmentsBalanceValue(user, month))
+                .orElse(BigDecimal.ZERO);
+
+        var response = InstallmentBalanceResponseDto.builder()
+                .totalToPay(installmentsBalanceValue)
+                .build();
+
+        LOGGER.info("stage=end method=InstallmentServiceImpl.getInstallmentBalance dto={}", response);
+        return response;
+    }
+
+    private BigDecimal getInstallmentsBalanceValue(User user, String month) {
+        if(Objects.nonNull(month)) {
+            return installmentRepository.getAllInstallmentsValueByUserIdAndMonth(user.getId(), month);
+        } else {
+            return installmentRepository.getAllInstallmentsValueByUserId(user.getId());
+        }
+    }
+
+    private Specification<Installment> filterInstallments(String month,String year, String search, String category) {
 
         Specification<Installment> specification = Specification
                 .where((root, query, criteriaBuilder) -> criteriaBuilder.conjunction());
@@ -65,7 +96,6 @@ public class InstallmentServiceImpl implements InstallmentService {
         if(category != null) {
             specification = specification.and(InstallmentSpecification.categoryEquals(category));
         }
-
         return specification;
     }
 }

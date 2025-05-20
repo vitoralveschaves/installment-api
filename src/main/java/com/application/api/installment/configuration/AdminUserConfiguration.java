@@ -7,6 +7,8 @@ import com.application.api.installment.repository.RoleRepository;
 import com.application.api.installment.repository.UserRepository;
 import com.application.api.installment.repository.UserRoleRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
@@ -25,19 +27,24 @@ public class AdminUserConfiguration implements CommandLineRunner {
     @Value("${password.user.admin}")
     private String adminPassword;
 
+    @Value("${email.user.admin}")
+    private String adminEmail;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AdminUserConfiguration.class);
+
     @Override
     @Transactional
     public void run(String... args) throws Exception {
-        var userAdmin = userRepository.findByEmail("admin@example.com");
+        var userAdmin = userRepository.findByEmail(adminEmail);
         var roleAdmin = roleRepository.findByName("ADMIN");
 
         userAdmin.ifPresentOrElse(
                 user -> {
-                    System.out.println("User admin already exists");
+                    LOGGER.info("method=AdminUserConfiguration message=User admin already exists");
                 }, () -> {
                     User user = new User();
                     user.setName("admin");
-                    user.setEmail("admin@example.com");
+                    user.setEmail(adminEmail);
                     user.setPassword(passwordEncoder.encode(adminPassword));
                     user.setActive(true);
                     userRepository.save(user);

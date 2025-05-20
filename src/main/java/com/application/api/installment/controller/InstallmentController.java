@@ -1,6 +1,7 @@
 package com.application.api.installment.controller;
 
 import com.application.api.installment.controller.swagger.InstallmentSwagger;
+import com.application.api.installment.dto.InstallmentBalanceResponseDto;
 import com.application.api.installment.dto.InstallmentResponseDto;
 import com.application.api.installment.service.InstallmentService;
 import lombok.RequiredArgsConstructor;
@@ -30,5 +31,12 @@ public class InstallmentController implements InstallmentSwagger {
             @RequestParam(value = "category", required = false) String category) {
         var installments = installmentService.getInstallments(month, year, page, pageSize, search, category);
         return ResponseEntity.ok(installments);
+    }
+
+    @GetMapping("/balance")
+    public ResponseEntity<InstallmentBalanceResponseDto> getExpenseBalance(
+            @RequestParam(value = "month", required = false) String month) {
+        var response = installmentService.getInstallmentBalance(month);
+        return ResponseEntity.ok().body(response);
     }
 }

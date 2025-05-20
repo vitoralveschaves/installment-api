@@ -11,6 +11,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface InstallmentRepository extends JpaRepository<Installment, UUID>,
@@ -22,4 +25,19 @@ public interface InstallmentRepository extends JpaRepository<Installment, UUID>,
 
     @Query("SELECT i FROM Installment i JOIN i.expense e WHERE e.user.id = :userId")
     Page<Installment> findAllByUser(@Param("userId") UUID userId, Pageable pageable);
+
+    @Query("""
+        SELECT SUM(i.installmentValue) FROM Installment i
+        JOIN i.expense e JOIN e.user u
+        WHERE u.id = :userId AND i.isPaid = false
+        AND FUNCTION('to_char', i.currentMonth, 'MM') = :month
+    """)
+    BigDecimal getAllInstallmentsValueByUserIdAndMonth(UUID userId, String month);
+
+    @Query("""
+        SELECT SUM(i.installmentValue) FROM Installment i
+        JOIN i.expense e JOIN e.user u
+        WHERE u.id = :userId AND i.isPaid = false
+    """)
+    BigDecimal getAllInstallmentsValueByUserId(UUID userId);
 }

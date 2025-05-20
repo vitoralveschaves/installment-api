@@ -29,6 +29,9 @@ secret:
 password:
   user:
     admin: ${PASSWORD_ADMIN}
+email:
+  user:
+    admin: ${EMAIL_ADMIN}
 springdoc:
   override-with-generic-response: false
   api-docs:
