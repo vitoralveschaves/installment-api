@@ -5,6 +5,8 @@ import com.application.api.installment.dto.InstallmentResponseDto;
 import com.application.api.installment.model.Installment;
 import org.springframework.data.domain.Page;
 
+import java.util.UUID;
+
 public interface InstallmentService {
     Page<InstallmentResponseDto> getInstallments(
             String month,
@@ -15,4 +17,5 @@ public interface InstallmentService {
             String category
     );
     InstallmentBalanceResponseDto getInstallmentBalance(String month);
+    void pay(UUID id);
 }

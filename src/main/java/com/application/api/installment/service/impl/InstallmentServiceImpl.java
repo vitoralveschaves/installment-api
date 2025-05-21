@@ -3,6 +3,7 @@ package com.application.api.installment.service.impl;
 import com.application.api.installment.converter.InstallmentResponseConverter;
 import com.application.api.installment.dto.InstallmentBalanceResponseDto;
 import com.application.api.installment.dto.InstallmentResponseDto;
+import com.application.api.installment.exception.NotFoundException;
 import com.application.api.installment.model.Installment;
 import com.application.api.installment.model.User;
 import com.application.api.installment.repository.InstallmentRepository;
@@ -17,10 +18,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -66,6 +69,41 @@ public class InstallmentServiceImpl implements InstallmentService {
 
         LOGGER.info("stage=end method=InstallmentServiceImpl.getInstallmentBalance dto={}", response);
         return response;
+    }
+
+    @Override
+    @Transactional
+    public void pay(UUID id) {
+
+        Installment installment = installmentRepository.findInstalmentNotPaidById(id).orElseGet(() -> {
+            LOGGER.error("stage=error method=InstallmentServiceImpl.pay message=This installment does not exist or has already been paid");
+            throw new NotFoundException("This installment does not exist or has already been paid");
+        });
+
+        LOGGER.info("stage=init method=InstallmentServiceImpl.pay installmentId={}", id);
+
+        isAbleToPay(installment);
+
+        installment.setPaid(true);
+
+        installmentRepository.save(installment);
+
+        LOGGER.info("stage=end method=InstallmentServiceImpl.pay installmentId={}", id);
+    }
+
+    private void isAbleToPay(Installment installment) {
+
+        var installmentBefore = installmentRepository
+                .findByExpenseIdAndInstallmentNumber(installment.getExpense().getId(),
+                        installment.getInstallmentNumber() - 1);
+
+        if(installmentBefore.isEmpty()) {
+            return;
+        }
+
+        if(!installmentBefore.get().isPaid()) {
+            throw new RuntimeException("To pay this installment, you must pay the previous installment");
+        }
     }
 
     private BigDecimal getInstallmentsBalanceValue(User user, String month) {

@@ -33,5 +33,4 @@ public class AuthController implements AuthSwagger {
         authService.changePassword(request);
         return ResponseEntity.noContent().build();
     }
-
 }

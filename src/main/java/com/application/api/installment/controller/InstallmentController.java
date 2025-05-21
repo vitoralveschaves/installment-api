@@ -7,11 +7,9 @@ import com.application.api.installment.service.InstallmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/installments")
@@ -38,5 +36,11 @@ public class InstallmentController implements InstallmentSwagger {
             @RequestParam(value = "month", required = false) String month) {
         var response = installmentService.getInstallmentBalance(month);
         return ResponseEntity.ok().body(response);
+    }
+
+    @PatchMapping("/pay/{installmentId}")
+    public ResponseEntity<Object> pay(@PathVariable("installmentId") String installmentId) {
+        installmentService.pay(UUID.fromString(installmentId));
+        return ResponseEntity.noContent().build();
     }
 }
