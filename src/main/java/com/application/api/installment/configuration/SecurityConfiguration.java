@@ -40,7 +40,7 @@ public class SecurityConfiguration {
                     oauth.successHandler(loginSocialService);
                 })
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers(HttpMethod.POST, "/auth/**").permitAll();
+                    auth.requestMatchers(HttpMethod.POST, "/auth/login").permitAll();
                     auth.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-resources/**").permitAll();
                     auth.anyRequest().authenticated();
                 })
