@@ -7,18 +7,10 @@ import com.application.api.installment.dto.RoleResponseDto;
 import com.application.api.installment.service.RoleService;
 import com.application.api.installment.util.LocationBuilderUtil;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
@@ -28,15 +20,13 @@ import java.util.UUID;
 @RequestMapping("/roles")
 @SecurityRequirement(name = SecurityConfiguration.SECURITY)
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class RoleController implements RoleSwagger {
 
     private final RoleService roleService;
     private final LocationBuilderUtil locationUtils;
 
     @PostMapping
-    public ResponseEntity<Void> createRole(@RequestBody RoleRequestDto request) {
-
+    public ResponseEntity<Void> createRole(@RequestBody @Valid RoleRequestDto request) {
         RoleResponseDto role = roleService.createRole(request);
         URI location = locationUtils.buildLocation(role.getId());
         return ResponseEntity.created(location).build();
@@ -54,9 +44,9 @@ public class RoleController implements RoleSwagger {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/{id}/user")
-    @ResponseStatus(HttpStatus.OK)
-    public void addRoleToUser(@PathVariable("id") String id, @RequestBody RoleRequestDto request) {
+    @PatchMapping("/{id}/user")
+    public ResponseEntity<Void> addRoleToUser(@PathVariable("id") String id, @RequestBody @Valid RoleRequestDto request) {
         roleService.addRoleToUser(UUID.fromString(id), request.getName());
+        return ResponseEntity.noContent().build();
     }
 }

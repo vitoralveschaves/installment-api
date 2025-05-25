@@ -16,7 +16,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/categories")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class CategoryController implements CategorySwagger {
 
     private final CategoryService categoryService;
