@@ -80,11 +80,16 @@ public class AuthServiceImpl implements AuthService {
 
     private void isMatchPassword(ChangePasswordRequestDto dto, User user) {
 
+        LOGGER.info("stage=init method=AuthServiceImpl.isMatchPassword");
+
         String passwordFromDatabase = user.getPassword();
         var isMatch = passwordEncoder.matches(dto.getOldPassword(), passwordFromDatabase);
 
         if(!isMatch) {
+            LOGGER.error("stage=error method=AuthServiceImpl.isMatchPassword message=Invalid credentials");
             throw new BadCredentialsException("Invalid credentials");
         }
+
+        LOGGER.info("stage=end method=AuthServiceImpl.isMatchPassword");
     }
 }
