@@ -14,13 +14,14 @@ import lombok.ToString;
 @ToString
 public class UserRequestDto {
 
-        @NotBlank(message = "Campo obrigatório")
+        @NotBlank(message = "Required field")
         private String name;
 
-        @Email(message = "Email inválido")
+        @NotBlank(message = "Required field")
+        @Email(message = "Invalid email")
         private String email;
 
-        @NotBlank(message = "Campo obrigatório")
-        @Size(min = 8, message = "O campo deve possuir no mínimo 8 caracteres")
+        @NotBlank(message = "Required field")
+        @Size(min = 8, message = "Password must contain at least 8 characters")
         private String password;
 }
