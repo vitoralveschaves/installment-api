@@ -1,8 +1,9 @@
 package com.application.api.installment.service.impl;
 
-import com.application.api.installment.converter.InstallmentResponseConverter;
+import com.application.api.installment.converter.InstallmentPaginationResponseConverter;
 import com.application.api.installment.dto.InstallmentBalanceResponseDto;
 import com.application.api.installment.dto.InstallmentResponseDto;
+import com.application.api.installment.dto.PaginationResponseDto;
 import com.application.api.installment.exception.NotFoundException;
 import com.application.api.installment.model.Installment;
 import com.application.api.installment.model.User;
@@ -14,7 +15,6 @@ import com.application.api.installment.util.PaginationUtils;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -32,11 +32,11 @@ public class InstallmentServiceImpl implements InstallmentService {
     private static final Logger LOGGER = LoggerFactory.getLogger(InstallmentServiceImpl.class);
     private final InstallmentRepository installmentRepository;
     private final SecurityService securityService;
-    private final InstallmentResponseConverter installmentResponseConverter;
+    private final InstallmentPaginationResponseConverter installmentPaginationResponseConverter;
     private final PaginationUtils paginationUtils;
 
     @Override
-    public Page<InstallmentResponseDto> getInstallments(
+    public PaginationResponseDto<InstallmentResponseDto> getInstallments(
             String month,String year, Integer page,Integer pageSize, String search, String category) {
 
         LOGGER.info("stage=init method=InstallmentServiceImpl.getInstallments");
@@ -47,7 +47,7 @@ public class InstallmentServiceImpl implements InstallmentService {
 
         var installments = installmentRepository.findAll(specification, pageable);
 
-        Page<InstallmentResponseDto> response = installments.map(installmentResponseConverter);
+        PaginationResponseDto<InstallmentResponseDto> response = installmentPaginationResponseConverter.apply(installments);
 
         LOGGER.info("stage=end method=InstallmentServiceImpl.getInstallments");
         return response;
@@ -83,15 +83,15 @@ public class InstallmentServiceImpl implements InstallmentService {
         LOGGER.info("stage=init method=InstallmentServiceImpl.pay installmentId={}", id);
 
         isAbleToPay(installment);
-
         installment.setPaid(true);
 
         installmentRepository.save(installment);
-
         LOGGER.info("stage=end method=InstallmentServiceImpl.pay installmentId={}", id);
     }
 
     private void isAbleToPay(Installment installment) {
+
+        LOGGER.info("stage=init method=InstallmentServiceImpl.isAbleToPay installmentId={}", installment.getId());
 
         var installmentBefore = installmentRepository
                 .findByExpenseIdAndInstallmentNumber(installment.getExpense().getId(),
@@ -102,6 +102,7 @@ public class InstallmentServiceImpl implements InstallmentService {
         }
 
         if(!installmentBefore.get().isPaid()) {
+            LOGGER.error("stage=error method=InstallmentServiceImpl.isAbleToPay message=To pay this installment, you must pay the previous installment");
             throw new RuntimeException("To pay this installment, you must pay the previous installment");
         }
     }

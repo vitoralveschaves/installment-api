@@ -2,13 +2,12 @@ package com.application.api.installment.service;
 
 import com.application.api.installment.dto.InstallmentBalanceResponseDto;
 import com.application.api.installment.dto.InstallmentResponseDto;
-import com.application.api.installment.model.Installment;
-import org.springframework.data.domain.Page;
+import com.application.api.installment.dto.PaginationResponseDto;
 
 import java.util.UUID;
 
 public interface InstallmentService {
-    Page<InstallmentResponseDto> getInstallments(
+    PaginationResponseDto<InstallmentResponseDto> getInstallments(
             String month,
             String year,
             Integer page,

@@ -1,15 +1,14 @@
 package com.application.api.installment.service;
 
-import com.application.api.installment.dto.*;
-import org.springframework.data.domain.Page;
+import com.application.api.installment.dto.PaginationResponseDto;
+import com.application.api.installment.dto.UserRequestDto;
+import com.application.api.installment.dto.UserResponseDto;
 
-import java.util.List;
 import java.util.UUID;
 
 public interface UserService {
     UserResponseDto register(UserRequestDto request);
-    Page<UserResponseDto> getAllPagination(Integer page, Integer pageSize);
-    List<UserResponseDto> getAll();
+    PaginationResponseDto<UserResponseDto> getAllPagination(Integer page, Integer pageSize);
     UserResponseDto getById(UUID id);
     UserResponseDto getActiveUserById(UUID id);
     UserResponseDto getActiveUserByEmail(String email);

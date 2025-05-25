@@ -1,7 +1,9 @@
 package com.application.api.installment.service.impl;
 
 import com.application.api.installment.converter.UserEntityConverter;
+import com.application.api.installment.converter.UserPaginationResponseConverter;
 import com.application.api.installment.converter.UserResponseConverter;
+import com.application.api.installment.dto.PaginationResponseDto;
 import com.application.api.installment.dto.UserRequestDto;
 import com.application.api.installment.dto.UserResponseDto;
 import com.application.api.installment.exception.AlreadyExistsException;
@@ -10,11 +12,11 @@ import com.application.api.installment.model.User;
 import com.application.api.installment.repository.UserRepository;
 import com.application.api.installment.service.RoleService;
 import com.application.api.installment.service.UserService;
+import com.application.api.installment.util.PaginationUtils;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +34,8 @@ public class UserServiceImpl implements UserService {
     private final RoleService roleService;
     private final UserEntityConverter userEntityConverter;
     private final UserResponseConverter userResponseConverter;
+    private final PaginationUtils paginationUtils;
+    private final UserPaginationResponseConverter userPaginationResponseConverter;
 
 
     @Override
@@ -63,31 +67,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<UserResponseDto> getAllPagination(Integer page, Integer pageSize) {
+    public PaginationResponseDto<UserResponseDto> getAllPagination(Integer page, Integer pageSize) {
 
         LOGGER.info("stage=init method=UserServiceImpl.getAllPagination");
 
-        Pageable pageable = PageRequest.of((page - 1), pageSize);
+        if(!paginationUtils.isAbleToPagination(page, pageSize)) {
+            var usersList = getAll();
+            LOGGER.info("stage=end method=UserServiceImpl.getAllPagination");
+            return usersList;
+        }
+
+        Pageable pageable = paginationUtils.getPageable(page, pageSize);
         Page<User> usersPage = userRepository.findAllActivesUsersPagination(pageable);
 
-        var usersPageable = usersPage.map(userResponseConverter);
+        PaginationResponseDto<UserResponseDto> usersPageable = userPaginationResponseConverter.apply(usersPage);
 
         LOGGER.info("stage=end method=UserServiceImpl.getAllPagination message=All users fetched");
 
         return usersPageable;
-    }
-
-    @Override
-    public List<UserResponseDto> getAll() {
-
-        LOGGER.info("stage=init method=UserServiceImpl.getAll");
-
-        List<User> usersList = userRepository.findAllActivesUsers();
-
-        var users = usersList.stream().map(userResponseConverter).toList();
-        LOGGER.info("stage=end method=UserServiceImpl.getAll message=All users fetched");
-
-        return users;
     }
 
     @Override
@@ -166,6 +163,21 @@ public class UserServiceImpl implements UserService {
 
         inactiveOrActiveUser(user);
         LOGGER.info("stage=end method=UserServiceImpl.activeByEmail message=User activated");
+    }
+
+    private PaginationResponseDto<UserResponseDto> getAll() {
+
+        LOGGER.info("stage=init method=UserServiceImpl.getAll");
+
+        List<User> usersList = userRepository.findAllActivesUsers();
+
+        var users = usersList.stream().map(userResponseConverter).toList();
+        LOGGER.info("stage=end method=UserServiceImpl.getAll message=All users fetched");
+
+        return PaginationResponseDto.<UserResponseDto>builder()
+                .content(users)
+                .page(null)
+                .build();
     }
 
     private User findActiveUserById(UUID id) {
