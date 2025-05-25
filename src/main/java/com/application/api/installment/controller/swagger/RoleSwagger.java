@@ -78,10 +78,10 @@ public interface RoleSwagger {
 
     @Operation(
             summary = "Adiciona acesso a um usuário",
-            method = "PUT",
+            method = "PATCH",
             responses = {
                     @ApiResponse(
-                            responseCode = "200",
+                            responseCode = "204",
                             description = "Acesso adicionado com sucesso"
                     ),
                     @ApiResponse(
@@ -104,6 +104,6 @@ public interface RoleSwagger {
                     )
             }
     )
-    void addRoleToUser(String id, RoleRequestDto request);
+    ResponseEntity<Void> addRoleToUser(String id, RoleRequestDto request);
 
 }
