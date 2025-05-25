@@ -1,17 +1,14 @@
 package com.application.api.installment.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -22,6 +19,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @ToString
 @Builder
+@EntityListeners(AuditingEntityListener.class)
 public class Installment {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -49,4 +47,12 @@ public class Installment {
     @ManyToOne
     @JoinColumn(name = "expense_id")
     private Expense expense;
+
+    @CreatedDate
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 }
