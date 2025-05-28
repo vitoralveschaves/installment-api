@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -21,12 +22,15 @@ public interface InstallmentRepository extends JpaRepository<Installment, UUID>,
     void deleteInstallmentByExpense(@Param("expense") Expense expense);
 
     @Query("""
-        SELECT SUM(i.installmentValue) FROM Installment i
-        JOIN i.expense e JOIN e.user u
-        WHERE u.id = :userId AND i.isPaid = false
-        AND FUNCTION('to_char', i.currentMonth, 'MM') = :month
+        SELECT SUM(CASE WHEN FUNCTION('to_char', i.currentMonth, 'MM') = :month
+        THEN i.installmentValue ELSE 0 END),
+        SUM(i.installmentValue)
+        FROM Installment i
+        JOIN i.expense e
+        WHERE e.user.id = :userId
+        AND i.isPaid = false
     """)
-    BigDecimal getAllInstallmentsValueByUserIdAndMonth(UUID userId, String month);
+    List<Object[]> getAllInstallmentsValueByUserIdAndMonth(UUID userId, String month);
 
     @Query("""
         SELECT SUM(i.installmentValue) FROM Installment i

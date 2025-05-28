@@ -10,5 +10,8 @@ import java.math.BigDecimal;
 @Builder
 @ToString
 public class InstallmentBalanceResponseDto {
+
+    private BigDecimal totalToPayByMonth;
+
     private BigDecimal totalToPay;
 }

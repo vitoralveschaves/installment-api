@@ -1,5 +1,6 @@
 package com.application.api.installment.service.impl;
 
+import com.application.api.installment.converter.BalanceResponseConverter;
 import com.application.api.installment.converter.InstallmentPaginationResponseConverter;
 import com.application.api.installment.dto.InstallmentBalanceResponseDto;
 import com.application.api.installment.dto.InstallmentResponseDto;
@@ -22,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -34,6 +34,7 @@ public class InstallmentServiceImpl implements InstallmentService {
     private final SecurityService securityService;
     private final InstallmentPaginationResponseConverter installmentPaginationResponseConverter;
     private final PaginationUtils paginationUtils;
+    private final BalanceResponseConverter balanceResponseConverter;
 
     @Override
     public PaginationResponseDto<InstallmentResponseDto> getInstallments(
@@ -59,13 +60,7 @@ public class InstallmentServiceImpl implements InstallmentService {
         LOGGER.info("stage=init method=InstallmentServiceImpl.getInstallmentBalance");
         var user = securityService.getAuthenticationUser();
 
-        BigDecimal installmentsBalanceValue = Optional
-                .ofNullable(getInstallmentsBalanceValue(user, month))
-                .orElse(BigDecimal.ZERO);
-
-        var response = InstallmentBalanceResponseDto.builder()
-                .totalToPay(installmentsBalanceValue)
-                .build();
+        var response = getInstallmentsBalanceValue(user, month);
 
         LOGGER.info("stage=end method=InstallmentServiceImpl.getInstallmentBalance dto={}", response);
         return response;
@@ -98,6 +93,7 @@ public class InstallmentServiceImpl implements InstallmentService {
                         installment.getInstallmentNumber() - 1);
 
         if(installmentBefore.isEmpty()) {
+            LOGGER.info("stage=end method=InstallmentServiceImpl.isAbleToPay installmentId={}", installment.getId());
             return;
         }
 
@@ -105,14 +101,30 @@ public class InstallmentServiceImpl implements InstallmentService {
             LOGGER.error("stage=error method=InstallmentServiceImpl.isAbleToPay message=To pay this installment, you must pay the previous installment");
             throw new RuntimeException("To pay this installment, you must pay the previous installment");
         }
+
+        LOGGER.info("stage=end method=InstallmentServiceImpl.isAbleToPay installmentId={}", installment.getId());
     }
 
-    private BigDecimal getInstallmentsBalanceValue(User user, String month) {
+    private InstallmentBalanceResponseDto getInstallmentsBalanceValue(User user, String month) {
+
+        LOGGER.info("stage=init method=InstallmentServiceImpl.getInstallmentsBalanceValue");
+
         if(Objects.nonNull(month)) {
-            return installmentRepository.getAllInstallmentsValueByUserIdAndMonth(user.getId(), month);
-        } else {
-            return installmentRepository.getAllInstallmentsValueByUserId(user.getId());
+            var balances = installmentRepository.getAllInstallmentsValueByUserIdAndMonth(user.getId(), month);
+
+            LOGGER.info("stage=end method=InstallmentServiceImpl.getInstallmentsBalanceValue");
+
+            return balanceResponseConverter.apply(balances);
         }
+
+        var totalBalance = installmentRepository.getAllInstallmentsValueByUserId(user.getId());
+
+        LOGGER.info("stage=end method=InstallmentServiceImpl.getInstallmentsBalanceValue");
+
+        return InstallmentBalanceResponseDto.builder()
+                .totalToPayByMonth(BigDecimal.ZERO)
+                .totalToPay(totalBalance == null ? BigDecimal.ZERO : totalBalance)
+                .build();
     }
 
     private Specification<Installment> filterInstallments(String month,String year, String search, String category) {
