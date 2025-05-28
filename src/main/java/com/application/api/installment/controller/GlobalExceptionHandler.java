@@ -4,6 +4,8 @@ import com.application.api.installment.dto.ErrorResponseDto;
 import com.application.api.installment.dto.FieldErrorsDto;
 import com.application.api.installment.exception.AlreadyExistsException;
 import com.application.api.installment.exception.NotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,6 +17,8 @@ import java.util.List;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
@@ -51,6 +55,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponseDto handleRuntimeException(Exception e) {
+        LOGGER.error("Ocorreu um erro inesperado", e);
         return new ErrorResponseDto(HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "Ocorreu um erro inesperado: " + e.getMessage() + " " + e.getClass(),
                 List.of());
