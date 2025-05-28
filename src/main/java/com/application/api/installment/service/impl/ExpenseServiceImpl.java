@@ -57,13 +57,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         LOGGER.info("stage=info method=ExpenseServiceImpl.createExpense message=Expense saved expenseId={}",
                 expense.getId());
 
-        BigDecimal result = getInstallmentValue(expense);
-
-        List<Installment> installmentList = new ArrayList<>();
-        for (int i = 0; i < expense.getQuantityInstallments(); i++) {
-            Installment installment = createInstallment(expense, i, result);
-            installmentList.add(installment);
-        }
+        List<Installment> installmentList = getInstallments(expense);
 
         installmentRepository.saveAll(installmentList);
         var response = expenseResponseConverter.apply(expense);
@@ -144,10 +138,54 @@ public class ExpenseServiceImpl implements ExpenseService {
         expenseRepository.save(expense);
     }
 
+    private List<Installment> getInstallments(Expense expense) {
+
+        LOGGER.info("stage=init method=ExpenseServiceImpl.getInstallments expenseId={}", expense.getId());
+
+        BigDecimal valueByMonth = getInstallmentValue(expense);
+
+        BigDecimal brokenValue = getBrokenValue(expense, valueByMonth);
+
+        List<Installment> installmentList = new ArrayList<>();
+
+        for (int i = 0; i < expense.getQuantityInstallments(); i++) {
+
+            if(expense.getQuantityInstallments() == (i + 1) && Objects.nonNull(brokenValue)) {
+                valueByMonth = valueByMonth.add(brokenValue);
+            }
+
+            Installment installment = createInstallment(expense, i, valueByMonth);
+            installmentList.add(installment);
+        }
+
+        LOGGER.info("stage=end method=ExpenseServiceImpl.getInstallments expenseId={}", expense.getId());
+
+        return installmentList;
+    }
+
     private BigDecimal getInstallmentValue(Expense expense) {
         return expense.getTotalValue()
-                .divide(BigDecimal.valueOf(expense.getQuantityInstallments()),
-                        3, RoundingMode.HALF_EVEN);
+                .divide(BigDecimal.valueOf(expense.getQuantityInstallments()),2, RoundingMode.DOWN);
+    }
+
+    private BigDecimal getBrokenValue(Expense expense, BigDecimal valueByMonth) {
+
+        LOGGER.info("stage=init method=ExpenseServiceImpl.getBreakValue");
+
+        var totalValue = expense.getTotalValue();
+        var quantityInstallments = expense.getQuantityInstallments();
+
+        BigDecimal valueMultiply = valueByMonth.multiply(BigDecimal.valueOf(quantityInstallments));
+
+        if(valueMultiply.compareTo(totalValue) == 0) {
+            LOGGER.info("stage=end method=ExpenseServiceImpl.getBreakValue breakValue={}", BigDecimal.ZERO);
+            return null;
+        }
+
+        BigDecimal brokenValue = totalValue.subtract(valueMultiply);
+
+        LOGGER.info("stage=end method=ExpenseServiceImpl.getBreakValue breakValue={}", brokenValue);
+        return brokenValue;
     }
 
     private Installment createInstallment(Expense expense, int i, BigDecimal result) {
