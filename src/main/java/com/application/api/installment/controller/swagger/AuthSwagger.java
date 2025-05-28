@@ -45,7 +45,7 @@ public interface AuthSwagger {
                     )
             }
     )
-    ResponseEntity<LoginResponseDto> login(LoginRequestDto request);
+    ResponseEntity<LoginResponseDto> login(String language, LoginRequestDto request);
 
     @Operation(
             summary = "Modifica senha do usuário",
@@ -82,5 +82,5 @@ public interface AuthSwagger {
                     )
             }
     )
-    ResponseEntity<Void> changePassword(ChangePasswordRequestDto request);
+    ResponseEntity<Void> changePassword(String language, ChangePasswordRequestDto request);
 }

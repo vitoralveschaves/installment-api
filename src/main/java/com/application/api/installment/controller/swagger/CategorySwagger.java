@@ -47,7 +47,7 @@ public interface CategorySwagger {
                     )
             }
     )
-    ResponseEntity<Void> createCategory(CategoryRequestDto request);
+    ResponseEntity<Void> createCategory(String language, CategoryRequestDto request);
 
     @Operation(
             summary = "Lista todas as categorias",
@@ -71,7 +71,7 @@ public interface CategorySwagger {
                     )
             }
     )
-    ResponseEntity<List<CategoryResponseDto>> getCategories();
+    ResponseEntity<List<CategoryResponseDto>> getCategories(String language);
 
     @Operation(
             summary = "Busca categoria pelo id correspondente",
@@ -98,7 +98,7 @@ public interface CategorySwagger {
                     )
             }
     )
-    ResponseEntity<CategoryResponseDto> getById(String id);
+    ResponseEntity<CategoryResponseDto> getById(String language, String id);
 
     @Operation(
             summary = "Exclui categoria pelo id correspondente",
@@ -125,5 +125,5 @@ public interface CategorySwagger {
                     )
             }
     )
-    ResponseEntity<Void> deleteCategory(String id);
+    ResponseEntity<Void> deleteCategory(String language, String id);
 }

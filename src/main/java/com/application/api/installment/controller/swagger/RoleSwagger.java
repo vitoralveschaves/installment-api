@@ -53,7 +53,7 @@ public interface RoleSwagger {
                     )
             }
     )
-    ResponseEntity<Void> createRole(RoleRequestDto request);
+    ResponseEntity<Void> createRole(String language, RoleRequestDto request);
 
     @Operation(
             summary = "Lista todos os acessos",
@@ -74,7 +74,7 @@ public interface RoleSwagger {
                     )
             }
     )
-    ResponseEntity<List<RoleResponseDto>> getAllRoles();
+    ResponseEntity<List<RoleResponseDto>> getAllRoles(String language);
 
     @Operation(
             summary = "Adiciona acesso a um usuário",
@@ -104,6 +104,6 @@ public interface RoleSwagger {
                     )
             }
     )
-    ResponseEntity<Void> addRoleToUser(String id, RoleRequestDto request);
+    ResponseEntity<Void> addRoleToUser(String language, String id, RoleRequestDto request);
 
 }

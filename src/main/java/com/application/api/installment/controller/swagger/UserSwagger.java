@@ -53,7 +53,7 @@ public interface UserSwagger {
                     )
             }
     )
-    ResponseEntity<Void> register(UserRequestDto request);
+    ResponseEntity<Void> register(String language, UserRequestDto request);
 
     @Operation(
             summary = "Lista todos os usuários",
@@ -77,7 +77,7 @@ public interface UserSwagger {
                     )
             }
     )
-    ResponseEntity<PaginationResponseDto<UserResponseDto>> getAll(Integer page, Integer pageSize);
+    ResponseEntity<PaginationResponseDto<UserResponseDto>> getAll(String language, Integer page, Integer pageSize);
 
     @Operation(
             summary = "Busca usuário pelo id correspondente",
@@ -104,7 +104,7 @@ public interface UserSwagger {
                     )
             }
     )
-    ResponseEntity<UserResponseDto> getById(String id);
+    ResponseEntity<UserResponseDto> getById(String language, String id);
 
     @Operation(
             summary = "Busca usuário pelo email correspondente",
@@ -131,7 +131,7 @@ public interface UserSwagger {
                     )
             }
     )
-    ResponseEntity<UserResponseDto> getByEmail(String email);
+    ResponseEntity<UserResponseDto> getByEmail(String language, String email);
 
     @Operation(
             summary = "Ativa usuário pelo email correspondente",
@@ -158,7 +158,7 @@ public interface UserSwagger {
                     )
             }
     )
-    ResponseEntity<Void> activeByEmail(String email);
+    ResponseEntity<Void> activeByEmail(String language, String email);
 
     @Operation(
             summary = "Exclui usuário pelo id correspondente",
@@ -185,7 +185,7 @@ public interface UserSwagger {
                     )
             }
     )
-    ResponseEntity<Void> deleteById(String id);
+    ResponseEntity<Void> deleteById(String language, String id);
 
     @Operation(
             summary = "Exclui usuário pelo email correspondente",
@@ -212,5 +212,5 @@ public interface UserSwagger {
                     )
             }
     )
-    ResponseEntity<Void> deleteByEmail(String email);
+    ResponseEntity<Void> deleteByEmail(String language, String email);
 }

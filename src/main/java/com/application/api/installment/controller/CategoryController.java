@@ -22,29 +22,31 @@ public class CategoryController implements CategorySwagger {
     private final LocationBuilderUtil locationUtils;
 
     @PostMapping
-    public ResponseEntity<Void> createCategory(@RequestBody @Valid CategoryRequestDto request) {
+    public ResponseEntity<Void> createCategory(@RequestHeader(value = "Accept-Language", required = false) String language,
+                                               @RequestBody @Valid CategoryRequestDto request) {
 
         CategoryResponseDto category = categoryService.createCategory(request);
-
         var location = locationUtils.buildLocation(category.getId());
 
         return ResponseEntity.created(location).build();
     }
 
     @GetMapping
-    public ResponseEntity<List<CategoryResponseDto>> getCategories() {
+    public ResponseEntity<List<CategoryResponseDto>> getCategories(@RequestHeader(value = "Accept-Language", required = false) String language) {
         List<CategoryResponseDto> categories = categoryService.getCategories();
         return ResponseEntity.ok(categories);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryResponseDto> getById(@PathVariable("id") String id) {
+    public ResponseEntity<CategoryResponseDto> getById(@RequestHeader(value = "Accept-Language", required = false) String language,
+                                                       @PathVariable("id") String id) {
         CategoryResponseDto response = categoryService.getByUuid(UUID.fromString(id));
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable("id") String id) {
+    public ResponseEntity<Void> deleteCategory(@RequestHeader(value = "Accept-Language", required = false) String language,
+                                               @PathVariable("id") String id) {
         categoryService.deleteCategory(UUID.fromString(id));
         return ResponseEntity.noContent().build();
     }

@@ -40,6 +40,7 @@ public interface InstallmentSwagger {
             }
     )
     ResponseEntity<PaginationResponseDto<InstallmentResponseDto>> getInstallments(
+            String language,
             Integer page,
             Integer pageSize,
             String month,
@@ -70,7 +71,7 @@ public interface InstallmentSwagger {
                     )
             }
     )
-    ResponseEntity<InstallmentBalanceResponseDto> getExpenseBalance(String month);
+    ResponseEntity<InstallmentBalanceResponseDto> getExpenseBalance(String language, String month);
 
     @Operation(
             summary = "Paga uma parcela",
@@ -100,5 +101,5 @@ public interface InstallmentSwagger {
                     )
             }
     )
-    ResponseEntity<Void> pay(String installmentId);
+    ResponseEntity<Void> pay(String language, String installmentId);
 }

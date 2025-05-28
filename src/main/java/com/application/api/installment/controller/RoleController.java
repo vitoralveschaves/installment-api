@@ -26,26 +26,29 @@ public class RoleController implements RoleSwagger {
     private final LocationBuilderUtil locationUtils;
 
     @PostMapping
-    public ResponseEntity<Void> createRole(@RequestBody @Valid RoleRequestDto request) {
+    public ResponseEntity<Void> createRole(@RequestHeader(value = "Accept-Language", required = false) String language,
+                                           @RequestBody @Valid RoleRequestDto request) {
         RoleResponseDto role = roleService.createRole(request);
         URI location = locationUtils.buildLocation(role.getId());
         return ResponseEntity.created(location).build();
     }
 
     @GetMapping
-    public ResponseEntity<List<RoleResponseDto>> getAllRoles() {
+    public ResponseEntity<List<RoleResponseDto>> getAllRoles(@RequestHeader(value = "Accept-Language", required = false) String language) {
         List<RoleResponseDto> rolesList = roleService.getAllRoles();
         return ResponseEntity.ok(rolesList);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RoleResponseDto> getById(@PathVariable("id") String id) {
+    public ResponseEntity<RoleResponseDto> getById(@RequestHeader(value = "Accept-Language", required = false) String language,
+                                                   @PathVariable("id") String id) {
         var response = roleService.getById(UUID.fromString(id));
         return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/{id}/user")
-    public ResponseEntity<Void> addRoleToUser(@PathVariable("id") String id, @RequestBody @Valid RoleRequestDto request) {
+    public ResponseEntity<Void> addRoleToUser(@RequestHeader(value = "Accept-Language", required = false) String language,
+                                              @PathVariable("id") String id, @RequestBody @Valid RoleRequestDto request) {
         roleService.addRoleToUser(UUID.fromString(id), request.getName());
         return ResponseEntity.noContent().build();
     }

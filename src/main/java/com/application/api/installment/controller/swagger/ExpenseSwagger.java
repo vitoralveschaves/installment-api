@@ -45,7 +45,7 @@ public interface ExpenseSwagger {
                     )
             }
     )
-    ResponseEntity<Void> createExpense(ExpenseRequestDto request);
+    ResponseEntity<Void> createExpense(String language, ExpenseRequestDto request);
 
     @Operation(
             summary = "Lista todas as despesas do usuário",
@@ -66,7 +66,7 @@ public interface ExpenseSwagger {
                     )
             }
     )
-    ResponseEntity<List<ExpenseResponseDto>> getExpenses(String search);
+    ResponseEntity<List<ExpenseResponseDto>> getExpenses(String language, String search);
 
     @Operation(
             summary = "Busca despesa pelo id correspondente",
@@ -93,7 +93,7 @@ public interface ExpenseSwagger {
                     )
             }
     )
-    ResponseEntity<ExpenseResponseDto> getById(String id);
+    ResponseEntity<ExpenseResponseDto> getById(String language, String id);
 
     @Operation(
             summary = "Exclui despesa pelo id correspondente",
@@ -120,7 +120,7 @@ public interface ExpenseSwagger {
                     )
             }
     )
-    ResponseEntity<Void> delete(String id);
+    ResponseEntity<Void> delete(String language, String id);
 
     @Operation(
             summary = "Atualiza despesa pelo id correspondente",
@@ -147,5 +147,5 @@ public interface ExpenseSwagger {
                     )
             }
     )
-    void update(String id, ExpenseUpdateDto request);
+    ResponseEntity<Void> update(String language, String id, ExpenseUpdateDto request);
 }
