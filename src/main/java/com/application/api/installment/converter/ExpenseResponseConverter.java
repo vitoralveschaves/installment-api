@@ -12,7 +12,7 @@ public class ExpenseResponseConverter implements Function<Expense, ExpenseRespon
     @Override
     public ExpenseResponseDto apply(Expense expense) {
         return ExpenseResponseDto.builder()
-                .expenseId(expense.getId())
+                .expenseId(expense.getUuid())
                 .title(expense.getTitle())
                 .totalValue(expense.getTotalValue())
                 .quantityInstallments(expense.getQuantityInstallments())

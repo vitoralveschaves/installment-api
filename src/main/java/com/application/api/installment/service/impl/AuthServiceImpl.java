@@ -59,9 +59,10 @@ public class AuthServiceImpl implements AuthService {
 
         LOGGER.info("stage=init method=AuthServiceImpl.changePassword");
 
-        User authenticationUser = securityService.getAuthenticationUser();
+        var authenticationUser = securityService.getAuthenticationUser();
 
         String email = authenticationUser.getEmail();
+
         var optionalUser = userRepository.findByEmail(email);
 
         User user = optionalUser.orElseGet(() -> {

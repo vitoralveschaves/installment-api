@@ -12,7 +12,7 @@ public class CategoryResponseConverter implements Function<Category, CategoryRes
     @Override
     public CategoryResponseDto apply(Category category) {
         return CategoryResponseDto.builder()
-                .id(category.getId())
+                .id(category.getUuid())
                 .name(category.getName())
                 .build();
     }

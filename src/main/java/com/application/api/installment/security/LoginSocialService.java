@@ -53,7 +53,7 @@ public class LoginSocialService extends SavedRequestAwareAuthenticationSuccessHa
                 .email(oAuth2User.getAttribute("email"))
                 .name(oAuth2User.getAttribute("name"))
                 .password(UUID.randomUUID().toString())
-                .active(true)
+                .active(Boolean.TRUE)
                 .build();
 
         userRepository.save(user);

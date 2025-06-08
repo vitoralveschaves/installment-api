@@ -20,7 +20,7 @@ public class UserEntityConverter implements Function<UserRequestDto, User> {
         return User.builder()
                 .name(value.getName())
                 .email(value.getEmail())
-                .active(true)
+                .active(Boolean.TRUE)
                 .password(passwordConverter(value.getPassword()))
                 .build();
     }

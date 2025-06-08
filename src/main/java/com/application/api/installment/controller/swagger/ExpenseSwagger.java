@@ -10,8 +10,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 
-import java.util.List;
-
 @Tag(name = "Despesas", description = "Recurso para registrar, listar, buscar e excluir despesas")
 @SecurityRequirement(name = SecurityConfiguration.SECURITY)
 public interface ExpenseSwagger {
@@ -66,7 +64,7 @@ public interface ExpenseSwagger {
                     )
             }
     )
-    ResponseEntity<List<ExpenseResponseDto>> getExpenses(String language, String search);
+    ResponseEntity<PaginationResponseDto<ExpenseResponseDto>> getExpenses(String language, Integer page, Integer pageSize, String search);
 
     @Operation(
             summary = "Busca despesa pelo id correspondente",

@@ -4,6 +4,7 @@ import com.application.api.installment.dto.ErrorResponseDto;
 import com.application.api.installment.dto.FieldErrorsDto;
 import com.application.api.installment.exception.AlreadyExistsException;
 import com.application.api.installment.exception.NotFoundException;
+import com.application.api.installment.exception.NotNullException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -38,6 +39,12 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponseDto handleNotFoundException(NotFoundException e) {
         return new ErrorResponseDto(HttpStatus.NOT_FOUND.value(), e.getMessage(), List.of());
+    }
+
+    @ExceptionHandler(NotNullException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    public ErrorResponseDto handleNotNullException(NotNullException e) {
+        return new ErrorResponseDto(HttpStatus.UNPROCESSABLE_ENTITY.value(), e.getMessage(), List.of());
     }
 
     @ExceptionHandler(AlreadyExistsException.class)

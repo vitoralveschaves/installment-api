@@ -6,7 +6,7 @@ import com.application.api.installment.dto.PaginationResponseDto;
 import com.application.api.installment.dto.UserRequestDto;
 import com.application.api.installment.dto.UserResponseDto;
 import com.application.api.installment.service.UserService;
-import com.application.api.installment.util.LocationBuilderUtil;
+import com.application.api.installment.util.LocationBuilderUtils;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
@@ -23,7 +22,7 @@ import java.util.UUID;
 public class UserController implements UserSwagger {
 
     private final UserService userService;
-    private final LocationBuilderUtil locationUtils;
+    private final LocationBuilderUtils locationUtils;
 
     @PostMapping
     public ResponseEntity<Void> register(@RequestHeader(value = "Accept-Language", required = false) String language,
@@ -45,7 +44,7 @@ public class UserController implements UserSwagger {
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDto> getById(@RequestHeader(value = "Accept-Language", required = false) String language,
                                                    @PathVariable("id") String id) {
-        UserResponseDto user = userService.getActiveUserById(UUID.fromString(id));
+        UserResponseDto user = userService.getActiveUserById(id);
         return ResponseEntity.ok(user);
     }
 
@@ -66,7 +65,7 @@ public class UserController implements UserSwagger {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@RequestHeader(value = "Accept-Language", required = false) String language,
                                            @PathVariable("id") String id) {
-        userService.deleteById(UUID.fromString(id));
+        userService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 

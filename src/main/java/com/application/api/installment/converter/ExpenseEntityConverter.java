@@ -8,8 +8,8 @@ import com.application.api.installment.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.function.BiFunction;
 
 @Component
@@ -30,7 +30,10 @@ public class ExpenseEntityConverter implements BiFunction<ExpenseRequestDto, Use
                 .build();
     }
 
-    private Category buildCategory(UUID categoryId) {
+    private Category buildCategory(String categoryId) {
+        if(Objects.isNull(categoryId)) {
+            return null;
+        }
         Optional<Category> category = categoryService.getById(categoryId);
         return category.orElse(null);
     }

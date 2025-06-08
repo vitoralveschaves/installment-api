@@ -4,6 +4,7 @@ import com.application.api.installment.converter.CategoryEntityConverter;
 import com.application.api.installment.converter.CategoryResponseConverter;
 import com.application.api.installment.dto.CategoryRequestDto;
 import com.application.api.installment.dto.CategoryResponseDto;
+import com.application.api.installment.exception.NotNullException;
 import com.application.api.installment.model.Category;
 import com.application.api.installment.exception.NotFoundException;
 import com.application.api.installment.repository.CategoryRepository;
@@ -17,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +34,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         if(Objects.isNull(dto)) {
             LOGGER.error("method=CategoryServiceImpl.createCategory message=Category dto cannot be null");
-            throw new RuntimeException("Category dto cannot be null");
+            throw new NotNullException("Category dto cannot be null");
         }
 
         LOGGER.info("stage=init method=CategoryServiceImpl.createCategory message=Category created dto={}", dto);
@@ -62,7 +62,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryResponseDto getByUuid(UUID id) {
+    public CategoryResponseDto getByUuid(String id) {
 
         LOGGER.info("stage=init method=CategoryServiceImpl.getByUuid categoryId={}", id);
 
@@ -80,24 +80,24 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Optional<Category> getById(UUID id) {
+    public Optional<Category> getById(String id) {
         if(id != null) {
-            return categoryRepository.findById(id);
+            return categoryRepository.findByUuid(id);
         }
         return Optional.empty();
     }
 
     @Override
     @Transactional
-    public void deleteCategory(UUID id) {
+    public void deleteCategory(String id) {
 
         LOGGER.info("stage=init method=CategoryServiceImpl.deleteCategory categoryId={}", id);
 
-        if(!categoryRepository.existsById(id)) {
+        if(!categoryRepository.existsByUuid(id)) {
             LOGGER.error("method=CategoryServiceImpl.deleteCategory message=Category not found");
             throw new NotFoundException("Category not found");
         }
-        categoryRepository.deleteById(id);
+        categoryRepository.deleteByUuid(id);
 
         LOGGER.info("stage=end method=CategoryServiceImpl.deleteCategory message=Category deleted");
     }

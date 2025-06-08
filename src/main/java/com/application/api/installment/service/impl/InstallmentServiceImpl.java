@@ -5,9 +5,9 @@ import com.application.api.installment.converter.InstallmentPaginationResponseCo
 import com.application.api.installment.dto.InstallmentBalanceResponseDto;
 import com.application.api.installment.dto.InstallmentResponseDto;
 import com.application.api.installment.dto.PaginationResponseDto;
+import com.application.api.installment.dto.UserAuthenticationData;
 import com.application.api.installment.exception.NotFoundException;
 import com.application.api.installment.model.Installment;
-import com.application.api.installment.model.User;
 import com.application.api.installment.repository.InstallmentRepository;
 import com.application.api.installment.repository.specification.InstallmentSpecification;
 import com.application.api.installment.security.SecurityService;
@@ -58,6 +58,7 @@ public class InstallmentServiceImpl implements InstallmentService {
     public InstallmentBalanceResponseDto getInstallmentBalance(String month) {
 
         LOGGER.info("stage=init method=InstallmentServiceImpl.getInstallmentBalance");
+
         var user = securityService.getAuthenticationUser();
 
         var response = getInstallmentsBalanceValue(user, month);
@@ -68,7 +69,7 @@ public class InstallmentServiceImpl implements InstallmentService {
 
     @Override
     @Transactional
-    public void pay(UUID id) {
+    public void pay(String id) {
 
         Installment installment = installmentRepository.findInstalmentNotPaidById(id).orElseGet(() -> {
             LOGGER.error("stage=error method=InstallmentServiceImpl.pay message=This installment does not exist or has already been paid");
@@ -78,7 +79,7 @@ public class InstallmentServiceImpl implements InstallmentService {
         LOGGER.info("stage=init method=InstallmentServiceImpl.pay installmentId={}", id);
 
         isAbleToPay(installment);
-        installment.setPaid(true);
+        installment.setPaid(Boolean.TRUE);
 
         installmentRepository.save(installment);
         LOGGER.info("stage=end method=InstallmentServiceImpl.pay installmentId={}", id);
@@ -105,19 +106,19 @@ public class InstallmentServiceImpl implements InstallmentService {
         LOGGER.info("stage=end method=InstallmentServiceImpl.isAbleToPay installmentId={}", installment.getId());
     }
 
-    private InstallmentBalanceResponseDto getInstallmentsBalanceValue(User user, String month) {
+    private InstallmentBalanceResponseDto getInstallmentsBalanceValue(UserAuthenticationData user, String month) {
 
         LOGGER.info("stage=init method=InstallmentServiceImpl.getInstallmentsBalanceValue");
 
         if(Objects.nonNull(month)) {
-            var balances = installmentRepository.getAllInstallmentsValueByUserIdAndMonth(user.getId(), month);
+            var balances = installmentRepository.getAllInstallmentsValueByUserIdAndMonth(UUID.fromString(user.getUserId()), month);
 
             LOGGER.info("stage=end method=InstallmentServiceImpl.getInstallmentsBalanceValue");
 
             return balanceResponseConverter.apply(balances);
         }
 
-        var totalBalance = installmentRepository.getAllInstallmentsValueByUserId(user.getId());
+        var totalBalance = installmentRepository.getAllInstallmentsValueByUserId(UUID.fromString(user.getUserId()));
 
         LOGGER.info("stage=end method=InstallmentServiceImpl.getInstallmentsBalanceValue");
 
@@ -133,20 +134,24 @@ public class InstallmentServiceImpl implements InstallmentService {
                 .where((root, query, criteriaBuilder) -> criteriaBuilder.conjunction());
 
         specification = specification.and(InstallmentSpecification
-                .byUserId(securityService.getAuthenticationUser().getId()));
+                .byUserId(UUID.fromString(securityService.getAuthenticationUser().getUserId())));
 
-        if(year != null) {
+        if(Objects.nonNull(year)) {
             specification = specification.and(InstallmentSpecification.getByYear(year));
         }
-        if(month != null) {
+
+        if(Objects.nonNull(month)) {
             specification = specification.and(InstallmentSpecification.getByMonth(month));
         }
-        if(search != null) {
+
+        if(Objects.nonNull(search)) {
             specification = specification.and(InstallmentSpecification.titleLike(search));
         }
-        if(category != null) {
+
+        if(Objects.nonNull(category)) {
             specification = specification.and(InstallmentSpecification.categoryEquals(category));
         }
+
         return specification;
     }
 }

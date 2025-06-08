@@ -8,7 +8,6 @@ import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.UUID;
 
 @Getter
 @AllArgsConstructor
@@ -17,7 +16,7 @@ import java.util.UUID;
 @ToString
 public class ExpenseResponseDto {
 
-    private UUID expenseId;
+    private String expenseId;
 
     private String title;
 

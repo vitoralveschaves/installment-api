@@ -4,14 +4,13 @@ import com.application.api.installment.controller.swagger.CategorySwagger;
 import com.application.api.installment.dto.CategoryRequestDto;
 import com.application.api.installment.dto.CategoryResponseDto;
 import com.application.api.installment.service.CategoryService;
-import com.application.api.installment.util.LocationBuilderUtil;
+import com.application.api.installment.util.LocationBuilderUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/categories")
@@ -19,7 +18,7 @@ import java.util.UUID;
 public class CategoryController implements CategorySwagger {
 
     private final CategoryService categoryService;
-    private final LocationBuilderUtil locationUtils;
+    private final LocationBuilderUtils locationUtils;
 
     @PostMapping
     public ResponseEntity<Void> createCategory(@RequestHeader(value = "Accept-Language", required = false) String language,
@@ -40,14 +39,14 @@ public class CategoryController implements CategorySwagger {
     @GetMapping("/{id}")
     public ResponseEntity<CategoryResponseDto> getById(@RequestHeader(value = "Accept-Language", required = false) String language,
                                                        @PathVariable("id") String id) {
-        CategoryResponseDto response = categoryService.getByUuid(UUID.fromString(id));
+        CategoryResponseDto response = categoryService.getByUuid(id);
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCategory(@RequestHeader(value = "Accept-Language", required = false) String language,
                                                @PathVariable("id") String id) {
-        categoryService.deleteCategory(UUID.fromString(id));
+        categoryService.deleteCategory(id);
         return ResponseEntity.noContent().build();
     }
 }

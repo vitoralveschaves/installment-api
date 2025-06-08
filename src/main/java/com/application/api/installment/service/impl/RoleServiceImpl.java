@@ -4,6 +4,7 @@ import com.application.api.installment.converter.RoleEntityConverter;
 import com.application.api.installment.converter.RoleResponseConverter;
 import com.application.api.installment.dto.RoleRequestDto;
 import com.application.api.installment.dto.RoleResponseDto;
+import com.application.api.installment.exception.NotNullException;
 import com.application.api.installment.model.Role;
 import com.application.api.installment.model.User;
 import com.application.api.installment.model.UserRole;
@@ -21,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -40,7 +40,7 @@ public class RoleServiceImpl implements RoleService {
 
         if(Objects.isNull(request)) {
             LOGGER.error("method=RoleServiceImpl.createRole message=Role data cannot be null");
-            throw new RuntimeException("Role data cannot be null");
+            throw new NotNullException("Role data cannot be null");
         }
 
         LOGGER.info("stage=init method=RoleServiceImpl.createRole message=Role created dto={}", request);
@@ -75,7 +75,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public RoleResponseDto getById(UUID id) {
+    public RoleResponseDto getById(Long id) {
 
         LOGGER.info("stage=init method=RoleServiceImpl.getById roleId={}", id);
 
@@ -92,7 +92,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Transactional
-    public void addRoleToUser(UUID id, String roleName) {
+    public void addRoleToUser(Long id, String roleName) {
 
         LOGGER.info("stage=init method=RoleServiceImpl.addRoleToUser roleId={} roleName={}",
                 id, roleName);
@@ -122,7 +122,7 @@ public class RoleServiceImpl implements RoleService {
 
         if(Objects.isNull(roleName)) {
             LOGGER.error("stage=error method=RoleServiceImpl.findByName message=roleName cannot be null");
-            throw new RuntimeException("roleName cannot be null");
+            throw new NotNullException("roleName cannot be null");
         }
 
         LOGGER.error("stage=init method=RoleServiceImpl.findByName roleName={}", roleName);

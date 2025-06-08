@@ -14,8 +14,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PaginationResponseDto<T> {
-    
     private List<T> content;
-
     private PageableResponseDto page;
 }

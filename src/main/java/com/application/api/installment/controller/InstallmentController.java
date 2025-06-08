@@ -9,8 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
-
 @RestController
 @RequestMapping("/installments")
 @RequiredArgsConstructor
@@ -39,10 +37,10 @@ public class InstallmentController implements InstallmentSwagger {
         return ResponseEntity.ok().body(response);
     }
 
-    @PatchMapping("/pay/{installmentId}")
+    @PatchMapping("/{installmentId}/pay")
     public ResponseEntity<Void> pay(@RequestHeader(value = "Accept-Language", required = false) String language,
                                     @PathVariable("installmentId") String installmentId) {
-        installmentService.pay(UUID.fromString(installmentId));
+        installmentService.pay(installmentId);
         return ResponseEntity.noContent().build();
     }
 }

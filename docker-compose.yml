@@ -1,0 +1,10 @@
+services:
+  postgres:
+    image: postgres:15.7
+    container_name: installment_db_container
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: installment_db
+    ports:
+      - 5432:5432

@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.UUID;
 
 @Getter
 @AllArgsConstructor
@@ -15,7 +14,7 @@ import java.util.UUID;
 @Builder
 public class InstallmentResponseDto {
 
-    private UUID installmentId;
+    private Long installmentId;
 
     private LocalDate currentMonth;
 

@@ -8,6 +8,7 @@ import com.application.api.installment.dto.UserRequestDto;
 import com.application.api.installment.dto.UserResponseDto;
 import com.application.api.installment.exception.AlreadyExistsException;
 import com.application.api.installment.exception.NotFoundException;
+import com.application.api.installment.exception.NotNullException;
 import com.application.api.installment.model.User;
 import com.application.api.installment.repository.UserRepository;
 import com.application.api.installment.service.RoleService;
@@ -23,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
 
         if(Objects.isNull(request)) {
             LOGGER.error("stage=error method=UserServiceImpl.register message=User data cannot be null");
-            throw new RuntimeException("User data cannot be null");
+            throw new NotNullException("User data cannot be null");
         }
 
         LOGGER.info("stage=init method=UserServiceImpl.register dto={}", request);
@@ -88,11 +88,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDto getById(UUID id) {
+    public UserResponseDto getById(String id) {
 
         LOGGER.info("stage=init method=UserServiceImpl.getById userId={}", id);
 
-        User user = userRepository.findById(id).orElseGet(() -> {
+        User user = userRepository.findByUuid(id).orElseGet(() -> {
             LOGGER.error("stage=error method=UserServiceImpl.getById message=User not found");
             throw new NotFoundException("User not found");
         });;
@@ -104,11 +104,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDto getActiveUserById(UUID id) {
+    public UserResponseDto getActiveUserById(String id) {
 
         LOGGER.info("stage=init method=UserServiceImpl.getActiveUserById userId={}", id);
 
-        User user = findActiveUserById(id);
+        User user = findActiveUserByUuid(id);
         var response = userResponseConverter.apply(user);
 
         LOGGER.info("stage=end method=UserServiceImpl.getActiveUserById message=User fetched userName={}", response.getName());
@@ -128,11 +128,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void deleteById(UUID id) {
+    public void deleteById(String id) {
 
         LOGGER.info("stage=init method=UserServiceImpl.deleteById userId={}", id);
 
-        User user = findActiveUserById(id);
+        User user = findActiveUserByUuid(id);
 
         inactiveOrActiveUser(user);
         LOGGER.info("stage=end method=UserServiceImpl.deleteById message=User deleted");
@@ -180,11 +180,11 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-    private User findActiveUserById(UUID id) {
+    private User findActiveUserByUuid(String id) {
 
         LOGGER.error("stage=init method=UserServiceImpl.findActiveUserById id={}", id);
 
-        User user = userRepository.findActiveUserById(id).orElseGet(() -> {
+        User user = userRepository.findActiveUserByUuid(id).orElseGet(() -> {
             LOGGER.error("stage=error method=UserServiceImpl.findActiveUserById message=User not found");
             throw new NotFoundException("User not found");
         });

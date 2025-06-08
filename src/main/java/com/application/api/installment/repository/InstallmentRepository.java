@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface InstallmentRepository extends JpaRepository<Installment, UUID>,
+public interface InstallmentRepository extends JpaRepository<Installment, Long>,
         JpaSpecificationExecutor<Installment> {
     @Modifying
     @Transactional
@@ -39,9 +39,9 @@ public interface InstallmentRepository extends JpaRepository<Installment, UUID>,
     """)
     BigDecimal getAllInstallmentsValueByUserId(UUID userId);
 
-    @Query("SELECT i FROM Installment i WHERE i.isPaid = false AND i.id = :installmentId")
-    Optional<Installment> findInstalmentNotPaidById(@Param("installmentId") UUID installmentId);
+    @Query("SELECT i FROM Installment i WHERE i.isPaid = false AND i.uuid = :installmentId")
+    Optional<Installment> findInstalmentNotPaidById(@Param("installmentId") String installmentId);
 
     @Query("SELECT i FROM Installment i JOIN i.expense e WHERE e.id = :id AND i.installmentNumber = :installmentNumber")
-    Optional<Installment> findByExpenseIdAndInstallmentNumber(UUID id, int installmentNumber);
+    Optional<Installment> findByExpenseIdAndInstallmentNumber(Long id, int installmentNumber);
 }

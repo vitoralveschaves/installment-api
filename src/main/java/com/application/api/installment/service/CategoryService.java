@@ -6,12 +6,11 @@ import com.application.api.installment.model.Category;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 public interface CategoryService {
     CategoryResponseDto createCategory(CategoryRequestDto request);
     List<CategoryResponseDto> getCategories();
-    CategoryResponseDto getByUuid(UUID id);
-    Optional<Category> getById(UUID id);
-    void deleteCategory(UUID id);
+    CategoryResponseDto getByUuid(String id);
+    Optional<Category> getById(String id);
+    void deleteCategory(String id);
 }

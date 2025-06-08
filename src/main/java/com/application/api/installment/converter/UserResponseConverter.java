@@ -12,7 +12,7 @@ public class UserResponseConverter implements Function<User, UserResponseDto> {
     @Override
     public UserResponseDto apply(User value) {
         return UserResponseDto.builder()
-                .id(value.getId())
+                .id(value.getUuid())
                 .name(value.getName())
                 .email(value.getEmail())
                 .active(value.isActive())

@@ -12,7 +12,6 @@ import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.UUID;
 
 @Getter
 @AllArgsConstructor
@@ -31,7 +30,7 @@ public class ExpenseRequestDto {
         @Positive(message = "Campo deve possuir um valor positivo")
         private Integer quantityInstallments;
 
-        private UUID categoryId;
+        private String categoryId;
 
         @NotNull(message = "Campo obrigatório")
         @PastOrPresent(message = "O campo não pode ser uma data futura")

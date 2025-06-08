@@ -6,10 +6,13 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.UUID;
 
-public interface ExpenseRepository extends JpaRepository<Expense, UUID>,
+public interface ExpenseRepository extends JpaRepository<Expense, Long>,
         JpaSpecificationExecutor<Expense> {
+
+    Optional<Expense> findByUuid(String uuid);
 
     @Query("""
         SELECT SUM(i.installmentValue) FROM Installment i

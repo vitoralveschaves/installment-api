@@ -19,43 +19,6 @@ import java.util.List;
 public interface RoleSwagger {
 
     @Operation(
-            summary = "Registra um novo acesso",
-            method = "POST",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "201",
-                            description = "Acesso registrado com sucesso",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = RoleResponseDto.class))
-                    ),
-                    @ApiResponse(
-                            responseCode = "403",
-                            description = "Token inválido ou expirado",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = ErrorResponseDto.class))
-                    ),
-                    @ApiResponse(
-                            responseCode = "409",
-                            description = "Acesso já existe",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = ErrorResponseDto.class))
-                    ),
-                    @ApiResponse(
-                            responseCode = "422",
-                            description = "Dados nulos ou inválidos",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = ErrorResponseDto.class))
-                    ),
-                    @ApiResponse(
-                            responseCode = "500",
-                            description = "Erro no servidor",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = ErrorResponseDto.class))
-                    )
-            }
-    )
-    ResponseEntity<Void> createRole(String language, RoleRequestDto request);
-
-    @Operation(
             summary = "Lista todos os acessos",
             method = "GET",
             responses = {
@@ -104,6 +67,5 @@ public interface RoleSwagger {
                     )
             }
     )
-    ResponseEntity<Void> addRoleToUser(String language, String id, RoleRequestDto request);
-
+    ResponseEntity<Void> addRoleToUser(String language, Long id, RoleRequestDto request);
 }

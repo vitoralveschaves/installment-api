@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.UUID;
-
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,7 +13,7 @@ import java.util.UUID;
 @ToString
 public class UserResponseDto {
 
-    private UUID id;
+    private String id;
 
     private String name;
 

@@ -1,22 +1,27 @@
 package com.application.api.installment.service.impl;
 
 import com.application.api.installment.converter.ExpenseEntityConverter;
+import com.application.api.installment.converter.ExpensePaginationResponseConverter;
 import com.application.api.installment.converter.ExpenseResponseConverter;
 import com.application.api.installment.dto.ExpenseRequestDto;
 import com.application.api.installment.dto.ExpenseResponseDto;
 import com.application.api.installment.dto.ExpenseUpdateDto;
+import com.application.api.installment.dto.PaginationResponseDto;
 import com.application.api.installment.exception.NotFoundException;
+import com.application.api.installment.exception.NotNullException;
 import com.application.api.installment.model.Expense;
 import com.application.api.installment.model.Installment;
-import com.application.api.installment.model.User;
 import com.application.api.installment.repository.ExpenseRepository;
 import com.application.api.installment.repository.InstallmentRepository;
+import com.application.api.installment.repository.UserRepository;
 import com.application.api.installment.repository.specification.ExpenseSpecification;
 import com.application.api.installment.security.SecurityService;
 import com.application.api.installment.service.ExpenseService;
+import com.application.api.installment.util.PaginationUtils;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +43,9 @@ public class ExpenseServiceImpl implements ExpenseService {
     private final SecurityService securityService;
     private final ExpenseEntityConverter expenseEntityConverter;
     private final ExpenseResponseConverter expenseResponseConverter;
+    private final UserRepository userRepository;
+    private final PaginationUtils pageableUtils;
+    private final ExpensePaginationResponseConverter expensePaginationResponseConverter;
 
     @Override
     @Transactional
@@ -45,21 +53,26 @@ public class ExpenseServiceImpl implements ExpenseService {
 
         if(Objects.isNull(request)) {
             LOGGER.error("stage=error method=ExpenseServiceImpl.createExpense message=Expense data cannot be null");
-            throw new RuntimeException("Expense data cannot be null");
+            throw new NotNullException("Expense data cannot be null");
         }
 
         LOGGER.info("stage=init method=ExpenseServiceImpl.createExpense request={}", request);
 
-        User userAuth = securityService.getAuthenticationUser();
-        Expense expense = expenseEntityConverter.apply(request, userAuth);
+        var userAuth = securityService.getAuthenticationUser();
+
+        var user = userRepository.findByEmail(userAuth.getEmail())
+                .orElseThrow(() -> new NotFoundException("User not found"));
+
+        Expense expense = expenseEntityConverter.apply(request, user);
+
+        List<Installment> installmentList = getInstallments(expense);
+
+        expense.setInstallments(installmentList);
 
         expenseRepository.save(expense);
         LOGGER.info("stage=info method=ExpenseServiceImpl.createExpense message=Expense saved expenseId={}",
                 expense.getId());
 
-        List<Installment> installmentList = getInstallments(expense);
-
-        installmentRepository.saveAll(installmentList);
         var response = expenseResponseConverter.apply(expense);
 
         LOGGER.info("stage=end method=ExpenseServiceImpl.createExpense response={}", response);
@@ -67,37 +80,34 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
-    public List<ExpenseResponseDto> getExpenses(String search) {
+    public PaginationResponseDto<ExpenseResponseDto> getExpenses(Integer page, Integer pageSize, String search) {
 
         LOGGER.info("stage=init method=ExpenseServiceImpl.getExpenses filterBy={}", search);
 
-        Specification<Expense> specification = Specification
-                .where((root, query, criteriaBuilder) -> criteriaBuilder.conjunction());
+        Specification<Expense> specification = filterExpenses(search);
 
-        if(search != null) {
-            specification = specification.and(ExpenseSpecification.titleLike(search));
-        }
+        Pageable pageable = pageableUtils.getPageable(page, pageSize);
 
-        List<Expense> expensesList = expenseRepository.findAll(specification);
+        var expensesPage = expenseRepository.findAll(specification, pageable);
 
-        var expenseResponseList = expensesList.stream().map(expenseResponseConverter).toList();
+        var response = expensePaginationResponseConverter.apply(expensesPage);
 
         LOGGER.info("stage=end method=ExpenseServiceImpl.getExpenses message=Expenses filtered");
 
-        return expenseResponseList;
+        return response;
     }
 
     @Override
-    public ExpenseResponseDto getById(UUID id) {
+    public ExpenseResponseDto getById(String id) {
 
         if(Objects.isNull(id)) {
             LOGGER.error("stage=error method=ExpenseServiceImpl.getById message=Expense id cannot be null");
-            throw new RuntimeException("Expense id cannot be null");
+            throw new NotNullException("Expense id cannot be null");
         }
 
         LOGGER.info("stage=init method=ExpenseServiceImpl.getById expenseId={}", id);
 
-        Expense expense = expenseRepository.findById(id)
+        Expense expense = expenseRepository.findByUuid(id)
                 .orElseGet(() -> {
                     LOGGER.error("stage=error method=ExpenseServiceImpl.getById message=Expense not found");
                     throw new NotFoundException("Expense not found");
@@ -108,16 +118,16 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
-    public void delete(UUID id) {
+    public void delete(String id) {
 
         if(Objects.isNull(id)) {
             LOGGER.error("stage=error method=ExpenseServiceImpl.delete message=Expense id cannot be null");
-            throw new RuntimeException("Expense id cannot be null");
+            throw new NotNullException("Expense id cannot be null");
         }
 
         LOGGER.info("stage=init method=ExpenseServiceImpl.delete expenseId={}", id);
 
-        Expense expense = expenseRepository.findById(id)
+        Expense expense = expenseRepository.findByUuid(id)
                 .orElseGet(() -> {
                     LOGGER.error("stage=error method=ExpenseServiceImpl.delete message=Expense not found");
                     throw new NotFoundException("Expense not found");
@@ -130,12 +140,25 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
-    public void update(UUID id, ExpenseUpdateDto request) {
+    public void update(String id, ExpenseUpdateDto request) {
         //TODO ainda falta implementar
-        Expense expense = expenseRepository.findById(id)
+        Expense expense = expenseRepository.findByUuid(id)
                 .orElseThrow(() -> new NotFoundException("Despesa não encontrada"));
         expense.setTitle(request.getTitle());
         expenseRepository.save(expense);
+    }
+
+    private Specification<Expense> filterExpenses(String search) {
+        Specification<Expense> specification = Specification
+                .where((root, query, criteriaBuilder) -> criteriaBuilder.conjunction());
+
+        specification = specification.and(ExpenseSpecification
+                .byUserId(UUID.fromString(securityService.getAuthenticationUser().getUserId())));
+
+        if(Objects.nonNull(search)) {
+            specification = specification.and(ExpenseSpecification.titleLike(search));
+        }
+        return specification;
     }
 
     private List<Installment> getInstallments(Expense expense) {
@@ -150,11 +173,15 @@ public class ExpenseServiceImpl implements ExpenseService {
 
         for (int i = 0; i < expense.getQuantityInstallments(); i++) {
 
-            if(expense.getQuantityInstallments() == (i + 1) && Objects.nonNull(brokenValue)) {
+            var isAbleToAddBrokenValue = expense.getQuantityInstallments() == (i + 1) && Objects.nonNull(brokenValue);
+
+            if(isAbleToAddBrokenValue) {
                 valueByMonth = valueByMonth.add(brokenValue);
             }
 
-            Installment installment = createInstallment(expense, i, valueByMonth);
+            var installmentNumber = i + 1;
+
+            Installment installment = createInstallment(expense, installmentNumber, valueByMonth);
             installmentList.add(installment);
         }
 
@@ -188,13 +215,13 @@ public class ExpenseServiceImpl implements ExpenseService {
         return brokenValue;
     }
 
-    private Installment createInstallment(Expense expense, int i, BigDecimal result) {
+    private Installment createInstallment(Expense expense, Integer installmentNumber, BigDecimal result) {
         return Installment.builder()
-                .currentMonth(expense.getInitialDate().plusMonths(i))
-                .installmentNumber(i + 1)
+                .currentMonth(expense.getInitialDate().plusMonths(installmentNumber - 1))
+                .installmentNumber(installmentNumber)
                 .installmentValue(result)
                 .quantityInstallments(expense.getQuantityInstallments())
-                .isPaid(false)
+                .isPaid(Boolean.FALSE)
                 .initialDate(expense.getInitialDate())
                 .expense(expense)
                 .build();

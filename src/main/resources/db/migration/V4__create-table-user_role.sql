@@ -1,0 +1,7 @@
+CREATE TABLE user_role (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    role_id BIGINT NOT NULL REFERENCES role(id) ON DELETE CASCADE,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);

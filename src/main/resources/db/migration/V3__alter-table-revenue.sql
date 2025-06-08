@@ -1,1 +1,0 @@
-alter table revenue drop column is_installment;

@@ -1,6 +1,7 @@
 package com.application.api.installment.converter;
 
 import com.application.api.installment.dto.LoginResponseDto;
+import com.application.api.installment.exception.NotNullException;
 import com.application.api.installment.model.User;
 import com.application.api.installment.model.UserRole;
 import com.application.api.installment.security.TokenService;
@@ -21,7 +22,7 @@ public class LoginResponseConverter implements Function<User, LoginResponseDto> 
     public LoginResponseDto apply(User value) {
 
         if(Objects.isNull(value)) {
-            throw new RuntimeException("User data cannot be null");
+            throw new NotNullException("User data cannot be null");
         }
 
         var token = tokenService.generateToken(value);
