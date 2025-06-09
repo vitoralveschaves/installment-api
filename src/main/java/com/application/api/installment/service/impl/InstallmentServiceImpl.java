@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Objects;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -111,14 +110,14 @@ public class InstallmentServiceImpl implements InstallmentService {
         LOGGER.info("stage=init method=InstallmentServiceImpl.getInstallmentsBalanceValue");
 
         if(Objects.nonNull(month)) {
-            var balances = installmentRepository.getAllInstallmentsValueByUserIdAndMonth(UUID.fromString(user.getUserId()), month);
+            var balances = installmentRepository.getAllInstallmentsValueByUserIdAndMonth(user.getUserId(), month);
 
             LOGGER.info("stage=end method=InstallmentServiceImpl.getInstallmentsBalanceValue");
 
             return balanceResponseConverter.apply(balances);
         }
 
-        var totalBalance = installmentRepository.getAllInstallmentsValueByUserId(UUID.fromString(user.getUserId()));
+        var totalBalance = installmentRepository.getAllInstallmentsValueByUserId(user.getUserId());
 
         LOGGER.info("stage=end method=InstallmentServiceImpl.getInstallmentsBalanceValue");
 
@@ -134,7 +133,7 @@ public class InstallmentServiceImpl implements InstallmentService {
                 .where((root, query, criteriaBuilder) -> criteriaBuilder.conjunction());
 
         specification = specification.and(InstallmentSpecification
-                .byUserId(UUID.fromString(securityService.getAuthenticationUser().getUserId())));
+                .byUserId(securityService.getAuthenticationUser().getUserId()));
 
         if(Objects.nonNull(year)) {
             specification = specification.and(InstallmentSpecification.getByYear(year));

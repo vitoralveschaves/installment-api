@@ -31,7 +31,6 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -153,7 +152,7 @@ public class ExpenseServiceImpl implements ExpenseService {
                 .where((root, query, criteriaBuilder) -> criteriaBuilder.conjunction());
 
         specification = specification.and(ExpenseSpecification
-                .byUserId(UUID.fromString(securityService.getAuthenticationUser().getUserId())));
+                .byUserId(securityService.getAuthenticationUser().getUserId()));
 
         if(Objects.nonNull(search)) {
             specification = specification.and(ExpenseSpecification.titleLike(search));

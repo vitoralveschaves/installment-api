@@ -5,8 +5,6 @@ import com.application.api.installment.model.Installment;
 import jakarta.persistence.criteria.Join;
 import org.springframework.data.jpa.domain.Specification;
 
-import java.util.UUID;
-
 public class InstallmentSpecification {
 
     public static Specification<Installment> getByMonth(String month) {
@@ -41,10 +39,10 @@ public class InstallmentSpecification {
                 .equal(criteriaBuilder.upper(root.get("expense").get("category").get("name")), category.toUpperCase());
     }
 
-    public static Specification<Installment> byUserId(UUID id) {
+    public static Specification<Installment> byUserId(String id) {
         return (root, query, criteriaBuilder) -> {
             Join<Installment, Expense> expenseJoin = root.join("expense");
-            return criteriaBuilder.equal(expenseJoin.get("user").get("id"), id);
+            return criteriaBuilder.equal(expenseJoin.get("user").get("uuid"), id);
         };
     }
 }

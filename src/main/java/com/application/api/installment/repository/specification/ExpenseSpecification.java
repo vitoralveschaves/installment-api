@@ -3,8 +3,6 @@ package com.application.api.installment.repository.specification;
 import com.application.api.installment.model.Expense;
 import org.springframework.data.jpa.domain.Specification;
 
-import java.util.UUID;
-
 public class ExpenseSpecification {
 
     public static Specification<Expense> titleLike(String search) {
@@ -12,8 +10,8 @@ public class ExpenseSpecification {
                 .like(criteriaBuilder.upper(root.get("title")), "%" + search.toUpperCase() + "%");
     }
 
-    public static Specification<Expense> byUserId(UUID id) {
+    public static Specification<Expense> byUserId(String id) {
         return (root, query, criteriaBuilder) -> criteriaBuilder
-                .equal(root.get("user").get("id"), id);
+                .equal(root.get("user").get("uuid"), id);
     }
 }

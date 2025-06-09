@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 public interface InstallmentRepository extends JpaRepository<Installment, Long>,
         JpaSpecificationExecutor<Installment> {
@@ -27,17 +26,17 @@ public interface InstallmentRepository extends JpaRepository<Installment, Long>,
         SUM(i.installmentValue)
         FROM Installment i
         JOIN i.expense e
-        WHERE e.user.id = :userId
+        WHERE e.user.uuid = :userId
         AND i.isPaid = false
     """)
-    List<Object[]> getAllInstallmentsValueByUserIdAndMonth(UUID userId, String month);
+    List<Object[]> getAllInstallmentsValueByUserIdAndMonth(String userId, String month);
 
     @Query("""
         SELECT SUM(i.installmentValue) FROM Installment i
         JOIN i.expense e JOIN e.user u
-        WHERE u.id = :userId AND i.isPaid = false
+        WHERE u.uuid = :userId AND i.isPaid = false
     """)
-    BigDecimal getAllInstallmentsValueByUserId(UUID userId);
+    BigDecimal getAllInstallmentsValueByUserId(String userId);
 
     @Query("SELECT i FROM Installment i WHERE i.isPaid = false AND i.uuid = :installmentId")
     Optional<Installment> findInstalmentNotPaidById(@Param("installmentId") String installmentId);
